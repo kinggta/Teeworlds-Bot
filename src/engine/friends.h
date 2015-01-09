@@ -29,13 +29,6 @@ public:
 		MAX_FRIENDS=128,
 	};
 
-	enum
-	{
-		CONTACT_NO=0,
-		CONTACT_FRIEND,
-		CONTACT_ENEMY,
-	};
-
 	virtual void Init() = 0;
 
 	virtual int NumFriends() const = 0;
