@@ -1,75 +1,24 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+bam
+.bam
+config.lua
+datasrc/__pycache__
+datasrc/*.pyc
+objs
+src/game/generated
+SDL.dll
+freetype.dll
+glew32.dll
+autoexec.cfg
+.bat
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# =========================
-# Operating System Files
-# =========================
-
-# OSX
-# =========================
-
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# Windows
-# =========================
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
+crapnet*
+dilate*
+fake_server*
+map_resave*
+map_version*
+mastersrv*
+packetgen*
+teeworlds*
+teeworlds_srv*
+tileset_border*
+versionsrv*
