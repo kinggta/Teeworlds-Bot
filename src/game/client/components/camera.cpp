@@ -59,7 +59,7 @@ void CCamera::OnRender()
 		{
 			t = acc / s;
 			a = 1.0f - ((float)clamp(acc - (int)((Now - m_LastSway) / (time_freq() / t)), 0, acc) / acc);
-			m_Center = m_WantedPos + vec2(cosf(2*pi * a), sinf(2*pi * a))*r;
+			m_Center = m_WantedPos; //+ vec2(cosf(2*pi * a), sinf(2*pi * a))*r;
 		}
 
 		if (m_LastSway + time_freq() * s < Now)
