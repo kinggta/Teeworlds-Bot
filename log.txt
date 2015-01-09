@@ -1,0 +1,102 @@
+[54afe9d4][client]: starting...
+[54afe9d5][glversion]: 4.3.12458 Compatibility Profile Context 13.200.0.0
+[54afe9d5][gfx]: shader #1 loaded
+[54afe9d5][gfx]: shader #2 loaded
+[54afe9d5][gfx]: shader #3 loaded
+[54afe9d5][gfx]: shader #4 loaded
+[54afe9d5][gfx]: shader #5 loaded
+[54afe9d5][gfx]: shader #6 loaded
+[54afe9d5][gfx]: shader #7 loaded
+[54afe9d5][gfx]: shader #8 loaded
+[54afe9d5][gfx]: shader #9 loaded
+[54afe9d5][gfx]: shader #10 loaded
+[54afe9d5][client/sound]: sound init successful
+[54afe9d5][engine/mastersrv]: refreshing master server addresses
+[54afe9d5][textrender]: loaded pFont from 'data/fonts/DejaVuSans.ttf'
+[54afe9d5][textrender]: default pFont set 08ED0034
+[54afe9d5][datafile]: loading. filename='xclient/shell.map'
+[54afe9d5][datafile]: allocsize=4756
+[54afe9d5][datafile]: readsize=4516
+[54afe9d5][datafile]: swaplen=4536
+[54afe9d5][datafile]: item_size=3900
+[54afe9d5][datafile]: loading done. datafile='xclient/shell.map'
+[54afe9d5][datafile]: loading data index=22 size=434 uncompressed=360000
+[54afe9d5][datafile]: loading data index=24 size=1537 uncompressed=360000
+[54afe9d5][datafile]: loading data index=25 size=887 uncompressed=360000
+[54afe9d5][datafile]: loading data index=26 size=1269 uncompressed=360000
+[54afe9d5][datafile]: loading data index=27 size=795 uncompressed=360000
+[54afe9d5][datafile]: loading data index=28 size=461 uncompressed=360000
+[54afe9d5][datafile]: loading data index=29 size=630 uncompressed=360000
+[54afe9d5][datafile]: loading data index=30 size=662 uncompressed=360000
+[54afe9d5][datafile]: loading data index=31 size=395 uncompressed=360000
+[54afe9d5][datafile]: loading data index=32 size=412 uncompressed=360000
+[54afe9d5][datafile]: loading data index=33 size=2450 uncompressed=360000
+[54afe9d5][datafile]: loading data index=34 size=372 uncompressed=360000
+[54afe9d5][datafile]: loading data index=35 size=527 uncompressed=360000
+[54afe9d5][datafile]: loading data index=36 size=720 uncompressed=360000
+[54afe9d5][datafile]: loading data index=37 size=372 uncompressed=360000
+[54afe9d5][datafile]: loading data index=39 size=372 uncompressed=360000
+[54afe9d5][datafile]: loading data index=1 size=7412 uncompressed=65536
+[54afe9d5][datafile]: loading data index=2 size=27 uncompressed=19
+[54afe9d5][datafile]: loading data index=3 size=27 uncompressed=19
+[54afe9d5][datafile]: loading data index=4 size=22 uncompressed=14
+[54afe9d5][datafile]: loading data index=5 size=19 uncompressed=11
+[54afe9d5][datafile]: loading data index=6 size=26 uncompressed=18
+[54afe9d5][datafile]: loading data index=7 size=23 uncompressed=15
+[54afe9d5][datafile]: loading data index=8 size=20 uncompressed=12
+[54afe9d5][datafile]: loading data index=9 size=27 uncompressed=19
+[54afe9d5][datafile]: loading data index=10 size=13 uncompressed=5
+[54afe9d5][datafile]: loading data index=11 size=14 uncompressed=6
+[54afe9d5][datafile]: loading data index=12 size=12 uncompressed=4
+[54afe9d6][datafile]: loading data index=14 size=8 uncompressed=0
+[54afe9d6][datafile]: loading data index=16 size=8 uncompressed=0
+[54afe9d6][]: pFont memory usage: 2097152
+[54afe9d6][gameclient]: initialisation finished after 1087.01ms
+[54afe9d6][client]: version 0.6 626fce9a778df4d4
+[54afe9d6][engine/mastersrv]: saving addresses
+[54afe9d6][datafile]: loading data index=17 size=69 uncompressed=152
+[54afe9d6][datafile]: loading data index=18 size=59 uncompressed=152
+[54afe9d6][datafile]: loading data index=19 size=68 uncompressed=152
+[54afe9d6][datafile]: loading data index=20 size=63 uncompressed=152
+[54afe9d6][datafile]: loading data index=21 size=2098 uncompressed=9120
+[54afe9d6][datafile]: loading data index=23 size=55 uncompressed=152
+[54afe9d6][datafile]: loading data index=38 size=113 uncompressed=304
+[54afe9d6][]: pFont memory usage: 3145728
+[54afe9d6][]: pFont memory usage: 4194304
+[54afe9d7][]: pFont memory usage: 4456448
+[54afe9d7][client]: saved screenshot to 'C:\Users\Kadir\AppData\Roaming/Teeworlds/screenshots/screenshot_2015-01-09_15-46-47.png'
+[54afe9d8][client]: disconnecting. reason='unknown'
+[54afe9d8][client]: connecting to '77.232.128.226:8303'
+[54afe9d8][client]: connected, sending info
+[54afe9d9][client]: loading map, map=ctf5 wanted crc=d92129a0
+[54afe9d9][datafile]: loading. filename='maps/ctf5.map'
+[54afe9d9][datafile]: allocsize=1416
+[54afe9d9][datafile]: readsize=1276
+[54afe9d9][datafile]: swaplen=1296
+[54afe9d9][datafile]: item_size=1008
+[54afe9d9][datafile]: loading done. datafile='maps/ctf5.map'
+[54afe9d9][client]: loaded map 'maps/ctf5.map'
+[54afe9d9][client/network]: loading done
+[54afe9d9][asd]: ctf5 d92129a0
+[54afe9d9][datafile]: loading data index=11 size=2252 uncompressed=129600
+[54afe9d9][datafile]: loading data index=9 size=797 uncompressed=119600
+[54afe9d9][datafile]: loading data index=10 size=1316 uncompressed=129600
+[54afe9d9][datafile]: loading data index=12 size=268 uncompressed=129600
+[54afe9d9][datafile]: loading data index=13 size=2715 uncompressed=129600
+[54afe9d9][datafile]: loading data index=14 size=2652 uncompressed=129600
+[54afe9d9][datafile]: loading data index=0 size=18 uncompressed=10
+[54afe9d9][datafile]: loading data index=1 size=18 uncompressed=10
+[54afe9d9][datafile]: loading data index=2 size=18 uncompressed=10
+[54afe9d9][datafile]: loading data index=3 size=27 uncompressed=19
+[54afe9d9][datafile]: loading data index=4 size=22 uncompressed=14
+[54afe9d9][datafile]: loading data index=5 size=19 uncompressed=11
+[54afe9d9][chat]: *** 'Shadd!X {13x37}' entered and joined the red team
+[54afe9da][(null)]: 2
+[54afe9da][(null)]: 2
+[54afe9da][datafile]: loading data index=6 size=79 uncompressed=152
+[54afe9da][datafile]: loading data index=7 size=354 uncompressed=1520
+[54afe9da][datafile]: loading data index=8 size=241 uncompressed=1064
+[54afe9da][]: pFont memory usage: 4718592
+[54afe9da][client]: saved screenshot to 'C:\Users\Kadir\AppData\Roaming/Teeworlds/screenshots/screenshot_2015-01-09_15-46-50.png'
+[54afe9db][client]: saved screenshot to 'C:\Users\Kadir\AppData\Roaming/Teeworlds/screenshots/screenshot_2015-01-09_15-46-51.png'
+[54afe9dc][client]: disconnecting. reason='unknown'
