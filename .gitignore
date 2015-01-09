@@ -10,7 +10,8 @@ SDL.dll
 freetype.dll
 glew32.dll
 autoexec.cfg
-.bat
+*.bat
+*.exe
 
 crapnet*
 dilate*
