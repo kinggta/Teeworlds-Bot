@@ -1,0 +1,50 @@
+######Done:
+[General]
+-Shader support
+-64 Player support (need to fix scoreboard)
+-Switch to "Server" menu tab when connected
+
+[UI]
+-Complete rework
+-Adjust options tab to fit the others
+-Rework controls tab in options
+-News
+-Create option to set the opened menu tab on startup (0=none, 1 = news, etc.) // open last menu
+-Adjust scoreboard in serverbrowser and ingame to handle 64 players
+
+[13x37]
+Tee & Color
+	-Highlight friends with special skin and color
+	-Add enemy funcionality to friendlist. also with highlight
+Bots
+	-Aimbot
+	-Triggerbot
+-Dummies
+-Identity manager (need to implent in gameclient)
+
+######ToDo:
+[General]
+-Quick refresh button
+-Cache last serverlist
+-Recent server tab
+-Slowly rename stuff from "13x37" to "x(Client)"
+-Login and forum connection (auth, news, version)
+
+[UI]
+-Interactive shellmap
+-Quickaccess for functions like dummy, ID, mark as friend etc.
+
+[13x37]
+Bots
+	-Wallshotbot
+	-Spinbot
+	-Chatbot
+	-Flybot(Hammer & Hook)
+ESP
+	Lines
+	Box
+	Radar
+	Minimap(?)
+	Aim & Hook lines
+Color & Tee
+	add customization options for almost everything
