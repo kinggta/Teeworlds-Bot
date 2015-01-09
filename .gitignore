@@ -10,6 +10,8 @@ SDL.dll
 freetype.dll
 glew32.dll
 autoexec.cfg
+log.txt
+compile_out.txt
 *.bat
 *.exe
 
