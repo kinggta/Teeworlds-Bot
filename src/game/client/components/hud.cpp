@@ -920,7 +920,7 @@ void CHud::OnRender()
 		RenderPauseNotification();
 		RenderSuddenDeath();
 		RenderScoreHud();
-		RenderSXScoreHud();
+		//RenderSXScoreHud();
 		RenderSXRadar();
 		RenderSXPing();
 		RenderWarmupTimer();
