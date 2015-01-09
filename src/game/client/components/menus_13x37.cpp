@@ -737,6 +737,12 @@ void CMenus::Render13x37Bots(CUIRect MainView)
 		MainView.HSplitTop(20.0f, &Button, &MainView);
 		if (DoButton_CheckBox(&g_Config.m_XAimbotTeamcheck, Localize("Teamcheck"), g_Config.m_XAimbotTeamcheck, &Button))
 			g_Config.m_XAimbotTeamcheck ^= 1;
+		MainView.HSplitTop(20.0f, &Button, &MainView);
+		if(DoButton_CheckBox(&g_Config.m_XAimbotEnemycheck, Localize("Aim on enemies only"), g_Config.m_XAimbotEnemycheck, &Button))
+			g_Config.m_XAimbotEnemycheck ^= 1;
+		MainView.HSplitTop(20.0f, &Button, &MainView);
+		if(DoButton_CheckBox(&g_Config.m_XAimbotFriendcheck, Localize("Do not aim on friends"), g_Config.m_XAimbotFriendcheck, &Button))
+			g_Config.m_XAimbotFriendcheck ^= 1;
 
 		MainView.HSplitTop(20.0f, &Button, &MainView);
 		MainView.HSplitTop(20.0f, &Button, &MainView);
