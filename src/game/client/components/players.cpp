@@ -558,7 +558,7 @@ void CPlayers::OnRender()
 				}
 			}
 		}
-		if(g_Config.m_XFriendHighlight && FriendState == 1)
+		if(g_Config.m_XFriendHighlight && FriendState == IFriends::CONTACT_FRIEND)
 		{
 			int Skin = m_pClient->m_pSkins->Find(g_Config.m_XFriendSkin);
 			if(Skin == -1)
@@ -568,7 +568,7 @@ void CPlayers::OnRender()
 			m_aRenderInfo[i].m_ColorBody = vec4(0.2f, 1.0f, 0.2f, 1.0f);
 			m_aRenderInfo[i].m_ColorFeet = vec4(0.2f, 1.0f, 0.2f, 1.0f);
 		}
-		if(g_Config.m_XEnemyHighlight && FriendState == 2)
+		if(g_Config.m_XEnemyHighlight && FriendState == IFriends::CONTACT_ENEMY)
 		{
 			int Skin = m_pClient->m_pSkins->Find(g_Config.m_XEnemySkin);
 			if(Skin == -1)

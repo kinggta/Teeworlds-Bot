@@ -137,6 +137,7 @@ bool CControls::Aimbot()
 		const void *pInfo = NULL;
 		int EnemyTeam = 0;
 		int Hit = 0;
+		int Friendstate = 0;
 
 		if(!m_pClient->m_Snap.m_aCharacters[i].m_Active || i == LocalID)
 			continue;
@@ -154,12 +155,17 @@ bool CControls::Aimbot()
 		EnemyPos = vec2(EnemyChar.m_Cur.m_X, EnemyChar.m_Cur.m_Y) + EnemyVel;
 		EnemyTeam = ((const CNetObj_PlayerInfo *)pInfo)->m_Team;
 		Hit = Collision()->IntersectLine(LocalPos, EnemyPos, 0, 0);
+		Friendstate = m_pClient->Friends()->IsFriend(m_pClient->m_aClients[i].m_aName, m_pClient->m_aClients[i].m_aClan, true);
 
 		if(g_Config.m_XAimbotWallcheck && Hit) // Wallcheck
 			continue;
 		if(g_Config.m_XAimbotRange <= distance(EnemyPos, LocalPos)) // Aimrange
 			continue;
 		if(g_Config.m_XAimbotTeamcheck && LocalTeam == EnemyTeam && (m_pClient->m_Snap.m_pGameInfoObj && (m_pClient->m_Snap.m_pGameInfoObj->m_GameFlags&GAMEFLAG_TEAMS))) // Teamcheck
+			continue;
+		if(g_Config.m_XAimbotEnemycheck && Friendstate != IFriends::CONTACT_ENEMY) // Aim on enemy only
+			continue;
+		if(g_Config.m_XAimbotFriendcheck && Friendstate == IFriends::CONTACT_FRIEND) // Do not aim on friends
 			continue;
 
 		Args.m_aEnemyPos[j++] = EnemyPos;
