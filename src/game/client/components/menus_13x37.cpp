@@ -71,18 +71,33 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 			OwnSkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 		OwnSkinInfo.m_Size = 26.0f*UI()->Scale();
-
 		RenderTools()->RenderTee(CAnimState::GetIdle(), &OwnSkinInfo, 0, vec2(1, 0), vec2(Button.x + Button.w - OwnSkinInfo.m_Size, Button.y + Button.h *0.6f));
-
-		if(g_Config.m_XFakeId-1 == i)
-			TextRender()->TextColor(0.2f, 1.0f, 0.2f, 0.5f);
-
 		Button.HMargin(2.0f, &Button);
 		Button.HSplitBottom(16.0f, 0, &Button);
 		UI()->DoLabelScaled(&Button, aTabs[i], 14.0f, 0);
 		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 	MainView.Margin(10.0f, &MainView);
+
+	MainView.Margin(10.0f, &MainView);
+	MainView.HSplitTop(10.0f, 0, &View);
+
+	View.HSplitTop(20.0f, 0, &View);
+	View.HSplitTop(20.0f, &Button, &View);
+	Button.VSplitLeft(230.0f, &Button, 0);
+
+	static int s_UseID[numID];
+
+	if(DoButton_Menu(&s_UseID[Page], Localize("Use ID"), 0, &Button))
+	{
+		str_format(g_Config.m_PlayerName, sizeof(g_Config.m_PlayerName), FAKE(Name, Page));
+		str_format(g_Config.m_PlayerClan, sizeof(g_Config.m_PlayerClan), FAKE(Clan, Page));
+		str_format(g_Config.m_PlayerSkin, sizeof(g_Config.m_PlayerSkin), FAKE(Skin, Page));
+		g_Config.m_PlayerUseCustomColor = FAKE(UseCustomColor, Page);
+		g_Config.m_PlayerColorBody = FAKE(ColorBody, Page);
+		g_Config.m_PlayerColorFeet = FAKE(ColorFeet, Page);
+		m_NeedSendinfo = true;
+	}
 
 	int *pUseCustomColor = NULL, *pColorBody = NULL, *pColorFeet = NULL;
 	char *pName, *pClan, *pSkin;
@@ -97,36 +112,8 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	pName = FAKE(Name, Page);
 	pClan = FAKE(Clan, Page);
 	pSkin = FAKE(Skin, Page);
-	
 #undef FAKE
 #undef FAKE_HELPER
-
-	MainView.Margin(10.0f, &MainView);
-	MainView.HSplitTop(10.0f, 0, &View);
-
-	View.HSplitTop(20.0f, 0, &View);
-	View.HSplitTop(20.0f, &Button, &View);
-	Button.VSplitLeft(230.0f, &Button, 0);
-
-	static int s_UseID[numID];
-	if(g_Config.m_XFakeId>0)
-		s_UseID[g_Config.m_XFakeId-1] = true;
-
-	if(DoButton_CheckBox(&s_UseID[Page], Localize("Use ID"), s_UseID[Page], &Button))
-	{
-		if(s_UseID[Page] == 0)
-		{
-			g_Config.m_XFakeId = Page+1;
-			for(int i = 0; i < numID; i++)
-				s_UseID[i] = false;
-		}
-		else
-		{
-			g_Config.m_XFakeId = 0;
-			s_UseID[Page] = false;
-		}		
-		m_NeedSendinfo = true;
-	}
 
 	// skin info
 	const CSkins::CSkin *pOwnSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pSkin));

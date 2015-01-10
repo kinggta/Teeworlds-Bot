@@ -138,7 +138,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	}
 	else
 	{
-		for(int i = 0; i < NumIdentities; i++)
+		for(int i = 1; i < NumIdentities; i++)
 		{
 			Button.VSplitLeft(80.0f, &Label, &Button);
 			if(DoButton_Menu(&s_Identity[i], "", 0, &Label))
@@ -162,22 +162,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 					SkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 				}
 			}
-			else
-			{
-				pSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(g_Config.m_PlayerSkin));
-				if(g_Config.m_PlayerUseCustomColor)
-				{
-					SkinInfo.m_Texture = pSkin->m_ColorTexture;
-					SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(g_Config.m_PlayerColorBody);
-					SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(g_Config.m_PlayerColorFeet);
-				}
-				else
-				{
-					SkinInfo.m_Texture = pSkin->m_OrgTexture;
-					SkinInfo.m_ColorBody = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-					SkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-				}
-			}
+			
 			SkinInfo.m_Size = 50.0f*UI()->Scale();
 			RenderTools()->RenderTee(CAnimState::GetIdle(), &SkinInfo, 0, vec2(1, 0), vec2(Label.x + Label.w * 0.5f, Label.y + Label.h * 0.5f));
 
@@ -243,6 +228,13 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		Temp.HMargin(12.0f, &Button);
 		if(DoButton_Menu(&s_ButtonUse, "Use Identity", 0, &Button))
 		{
+			str_format(g_Config.m_PlayerName, sizeof(g_Config.m_PlayerName), FAKE(Name, SelectedIdentity));
+			str_format(g_Config.m_PlayerClan, sizeof(g_Config.m_PlayerClan), FAKE(Clan, SelectedIdentity));
+			str_format(g_Config.m_PlayerSkin, sizeof(g_Config.m_PlayerSkin), FAKE(Skin, SelectedIdentity));
+			g_Config.m_PlayerUseCustomColor = FAKE(UseCustomColor, SelectedIdentity);
+			g_Config.m_PlayerColorBody = FAKE(ColorBody, SelectedIdentity);
+			g_Config.m_PlayerColorFeet = FAKE(ColorFeet, SelectedIdentity);
+			m_pClient->SendInfo(false);
 		}
 
 	}
