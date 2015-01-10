@@ -136,7 +136,6 @@ bool CControls::Aimbot()
 		CGameClient::CSnapState::CCharacterInfo EnemyChar;
 		const void *pInfo = NULL;
 		int EnemyTeam = 0;
-		int Hit = 0;
 		int Friendstate = 0;
 
 		if(!m_pClient->m_Snap.m_aCharacters[i].m_Active || i == LocalID)
@@ -144,20 +143,17 @@ bool CControls::Aimbot()
 
 		EnemyChar = m_pClient->m_Snap.m_aCharacters[i];
 		pInfo = Client()->SnapFindItem(IClient::SNAP_CURRENT, NETOBJTYPE_PLAYERINFO, i);
-
 		if(i == LocalID)
 		{
 			LocalTeam = ((const CNetObj_PlayerInfo *)pInfo)->m_Team;
 			continue;
 		}
-
 		EnemyVel = vec2(EnemyChar.m_Cur.m_VelX, EnemyChar.m_Cur.m_VelY) * (LocalPing*(50 / 1000));
 		EnemyPos = vec2(EnemyChar.m_Cur.m_X, EnemyChar.m_Cur.m_Y) + EnemyVel;
 		EnemyTeam = ((const CNetObj_PlayerInfo *)pInfo)->m_Team;
-		Hit = Collision()->IntersectLine(LocalPos, EnemyPos, 0, 0);
 		Friendstate = m_pClient->Friends()->IsFriend(m_pClient->m_aClients[i].m_aName, m_pClient->m_aClients[i].m_aClan, true);
 
-		if(g_Config.m_XAimbotWallcheck && Hit) // Wallcheck
+		if(g_Config.m_XAimbotWallcheck && Collision()->IntersectLine(LocalPos, EnemyPos, 0, 0)) // Wallcheck
 			continue;
 		if(g_Config.m_XAimbotRange <= distance(EnemyPos, LocalPos)) // Aimrange
 			continue;
@@ -283,11 +279,7 @@ int CControls::SnapInput(int *pData)
 			m_InputData.m_TargetX = (int)m_MousePos.x;
 			m_InputData.m_TargetY = (int)m_MousePos.y;
 		}
-
 		Triggerbot();
-
-
-
 
 		if(!m_InputData.m_TargetX && !m_InputData.m_TargetY)
 		{
