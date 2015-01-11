@@ -634,6 +634,7 @@ void CClient::Connect(const char *pAddress)
 		m_ServerAddress.port = Port;
 	m_NetClient.Connect(&m_ServerAddress);
 	SetState(IClient::STATE_CONNECTING);
+	m_ServerBrowser.AddRecent(m_ServerAddress);
 
 	if(m_DemoRecorder.IsRecording())
 		DemoRecorder_Stop();
@@ -2365,6 +2366,14 @@ void CClient::Con_AddFavorite(IConsole::IResult *pResult, void *pUserData)
 		pSelf->m_ServerBrowser.AddFavorite(Addr);
 }
 
+void CClient::Con_AddRecent(IConsole::IResult *pResult, void *pUserData)
+{
+	CClient *pSelf = (CClient *)pUserData;
+	NETADDR Addr;
+	if(net_addr_from_str(&Addr, pResult->GetString(0)) == 0)
+		pSelf->m_ServerBrowser.AddRecent(Addr);
+}
+
 void CClient::Con_RemoveFavorite(IConsole::IResult *pResult, void *pUserData)
 {
 	CClient *pSelf = (CClient *)pUserData;
@@ -2543,6 +2552,7 @@ void CClient::RegisterCommands()
 	m_pConsole->Register("add_demomarker", "", CFGFLAG_CLIENT, Con_AddDemoMarker, this, "Add demo timeline marker");
 	m_pConsole->Register("add_favorite", "s", CFGFLAG_CLIENT, Con_AddFavorite, this, "Add a server as a favorite");
 	m_pConsole->Register("remove_favorite", "s", CFGFLAG_CLIENT, Con_RemoveFavorite, this, "Remove a server from favorites");
+	m_pConsole->Register("add_recent", "s", CFGFLAG_CLIENT, Con_AddRecent, this, "Add a server as a recent");
 
 	m_pConsole->Register("dummy_connect", "", CFGFLAG_CLIENT, Con_ConnectDummy, this, "");
 

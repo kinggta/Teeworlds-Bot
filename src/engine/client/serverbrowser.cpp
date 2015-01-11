@@ -36,6 +36,7 @@ CServerBrowser::CServerBrowser()
 	m_pSortedServerlist = 0;
 
 	m_NumFavoriteServers = 0;
+	m_NumRecentServers = 0;
 
 	mem_zero(m_aServerlistIp, sizeof(m_aServerlistIp));
 
@@ -444,6 +445,17 @@ void CServerBrowser::Set(const NETADDR &Addr, int Type, int Token, const CServer
 			QueueRequest(pEntry);
 		}
 	}
+	else if(Type == IServerBrowser::SET_RECENT_ADD)
+	{
+		if(m_ServerlistType != IServerBrowser::TYPE_RECENT)
+			return;
+
+		if(!Find(Addr))
+		{
+			pEntry = Add(Addr);
+			QueueRequest(pEntry);
+		}
+	}
 	else if(Type == IServerBrowser::SET_TOKEN)
 	{
 		if(Token != m_CurrentToken)
@@ -527,6 +539,11 @@ void CServerBrowser::Refresh(int Type)
 	{
 		for(int i = 0; i < m_NumFavoriteServers; i++)
 			Set(m_aFavoriteServers[i], IServerBrowser::SET_FAV_ADD, -1, 0);
+	}
+	else if(Type == IServerBrowser::TYPE_RECENT)
+	{
+		for(int i = 0; i < m_NumRecentServers; i++)
+			Set(m_aRecentServers[i], IServerBrowser::SET_RECENT_ADD, -1, 0);
 	}
 }
 
@@ -748,6 +765,44 @@ void CServerBrowser::AddFavorite(const NETADDR &Addr)
 	}
 }
 
+void CServerBrowser::AddRecent(const NETADDR &Addr)
+{
+	CServerEntry *pEntry;
+	static int Cur = 0;
+	bool Full = false;
+
+	if(m_NumRecentServers == MAX_FAVORITES)
+		Full = true;
+
+	// make sure that we don't already have the server in our list
+	for(int i = 0; i < m_NumRecentServers; i++)
+	{
+		if(net_addr_comp(&Addr, &m_aRecentServers[i]) == 0)
+		{
+			for(int j = i; j > 0; j--)
+				m_aRecentServers[j - 1] = m_aRecentServers[j];
+			m_aRecentServers[0] = Addr;
+			return;
+		}
+	}
+
+	// add the server to the list
+	if(!Full)
+		m_aRecentServers[m_NumRecentServers++] = Addr;
+	else
+		m_aRecentServers[Cur++] = Addr;
+
+
+	if(g_Config.m_Debug)
+	{
+		char aAddrStr[NETADDR_MAXSTRSIZE];
+		net_addr_str(&Addr, aAddrStr, sizeof(aAddrStr), true);
+		char aBuf[256];
+		str_format(aBuf, sizeof(aBuf), "added recent, %s", aAddrStr);
+		m_pConsole->Print(IConsole::OUTPUT_LEVEL_DEBUG, "client_srvbrowse", aBuf);
+	}
+}
+
 void CServerBrowser::RemoveFavorite(const NETADDR &Addr)
 {
 	int i;
@@ -801,6 +856,12 @@ void CServerBrowser::ConfigSaveCallback(IConfig *pConfig, void *pUserData)
 	{
 		net_addr_str(&pSelf->m_aFavoriteServers[i], aAddrStr, sizeof(aAddrStr), true);
 		str_format(aBuffer, sizeof(aBuffer), "add_favorite %s", aAddrStr);
+		pConfig->WriteLine(aBuffer);
+	}
+	for(int i = 0; i < pSelf->m_NumRecentServers; i++)
+	{
+		net_addr_str(&pSelf->m_aRecentServers[i], aAddrStr, sizeof(aAddrStr), true);
+		str_format(aBuffer, sizeof(aBuffer), "add_recent %s", aAddrStr);
 		pConfig->WriteLine(aBuffer);
 	}
 }

@@ -81,7 +81,8 @@ public:
 
 		SET_MASTER_ADD=1,
 		SET_FAV_ADD,
-		SET_TOKEN
+		SET_TOKEN,
+		SET_RECENT_ADD,
 	};
 
 	virtual void Refresh(int Type) = 0;
@@ -97,6 +98,7 @@ public:
 
 	virtual bool IsFavorite(const NETADDR &Addr) const = 0;
 	virtual void AddFavorite(const NETADDR &Addr) = 0;
+	virtual void AddRecent(const NETADDR &Addr) = 0;
 	virtual void RemoveFavorite(const NETADDR &Addr) = 0;
 };
 
