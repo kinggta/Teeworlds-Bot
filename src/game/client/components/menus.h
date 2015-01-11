@@ -323,6 +323,7 @@ private:
 	bool m_QAWasActive;
 	void RenderQA(CUIRect MainView);
 	void RenderQADummy(CUIRect MainView);
+	void RenderQAMark(CUIRect MainView);
 	static void ConKeyShortcut(IConsole::IResult *pResult, void *pUserData);
 
 	void SetActive(bool Active);

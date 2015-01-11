@@ -50,8 +50,6 @@ void CMenus::RenderQADummy(CUIRect MainView)
 
 	const int NumDummys = 3 + 1;
 	const int NumIdentities = 5 + 1; // + original name
-
-	CUIRect Screen = *UI()->Screen();
 	CUIRect Button, Label, Temp;
 	static float s_Scrollbar = 0;
 	static float s_ScrollValue = 0;
@@ -62,13 +60,11 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	
 
 	// main form
-	MainView.HSplitTop(160.0f, &Temp, 0);
-	Temp.w = 380.0f;
-	Temp.x = MainView.w / 2 - Temp.w / 2;
-	RenderTools()->DrawUIRect(&Temp, vec4(0.0f, 0.0f, 0.0f, 0.5f), CUI::CORNER_B, 10.0f);
+	
+	RenderTools()->DrawUIRect(&MainView, vec4(0.0f, 0.0f, 0.0f, 0.5f), CUI::CORNER_B, 10.0f);
 
 	// tabs
-	Temp.HSplitTop(24.0f, &Button, &Temp);
+	MainView.HSplitTop(24.0f, &Button, &Temp);
 	Button.VSplitMid(&Button, &Label);
 	static int s_TabDummy = 0;
 	if(DoButton_MenuTab(&s_TabDummy, "Dummy", Page == 0, &Button, 0))
@@ -152,8 +148,8 @@ void CMenus::RenderQADummy(CUIRect MainView)
 				if(FAKE(UseCustomColor, i))
 				{
 					SkinInfo.m_Texture = pSkin->m_ColorTexture;
-					SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(DUMMY(ColorBody, i));
-					SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(DUMMY(ColorFeet, i));
+					SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(FAKE(ColorBody, i));
+					SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(FAKE(ColorFeet, i));
 				}
 				else
 				{
@@ -244,6 +240,13 @@ void CMenus::RenderQADummy(CUIRect MainView)
 #undef DUMMY
 }
 
+void CMenus::RenderQAMark(CUIRect MainView)
+{
+	MainView.w = MainView.h = 64.0f;
+	RenderTools()->DrawUIRect(&MainView, vec4(0.2f, 1.0f, 0.2f, 0.5f) , CUI::CORNER_ALL, 4.0f);
+
+}
+
 
 void CMenus::RenderQA(CUIRect MainView)
 {
@@ -268,13 +271,18 @@ void CMenus::RenderQA(CUIRect MainView)
 
 	Graphics()->BlendNormal();
 
-	Graphics()->TextureSet(-1);
-	Graphics()->QuadsBegin();
-	Graphics()->SetColor(0, 0, 0, 0.3f);
-	//DrawCircle(Screen.w/2, Screen.h/2, 190.0f, 64);
-	Graphics()->QuadsEnd();
+	CUIRect r;
+	MainView.HSplitTop(160.0f, &r, 0);
+	r.w = 380.0f;
+	r.x = MainView.w / 2 - r.w / 2;
+	RenderQADummy(r);
 
-	RenderQADummy(Screen);
+	if(!UI()->MouseInside(&r))
+	{
+
+	}
+
+
 
 
 
