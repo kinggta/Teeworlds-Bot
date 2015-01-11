@@ -123,9 +123,10 @@ bool CControls::Aimbot()
 	int LocalID = m_pClient->m_Snap.m_LocalClientID;
 	int LocalPing = m_pClient->m_Snap.m_paPlayerInfos[LocalID]->m_Latency;
 	int LocalTeam = m_pClient->m_Snap.m_paPlayerInfos[LocalID]->m_Team;
-	CGameClient::CSnapState::CCharacterInfo LocalChar = m_pClient->m_Snap.m_aCharacters[LocalID];
-	vec2 LocalVel = vec2(LocalChar.m_Cur.m_VelX, LocalChar.m_Cur.m_VelY) * (LocalPing*(50 / 1000));
-	vec2 LocalPos = vec2(LocalChar.m_Cur.m_X, LocalChar.m_Cur.m_Y) + LocalVel;
+	CNetObj_CharacterCore LocalChar;
+	m_pClient->m_aClients[LocalID].m_Predicted.Write(&LocalChar);
+	vec2 LocalVel = vec2(LocalChar.m_VelX / 256.0f, LocalChar.m_VelY / 256.0f) * (LocalPing*(50 / 1000));
+	vec2 LocalPos = vec2(LocalChar.m_X, LocalChar.m_Y) + LocalVel;
 	vec2 TargetPos = vec2(0, 0);
 	CArgs_Aimbot Args;
 
