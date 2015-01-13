@@ -120,6 +120,114 @@ void CScoreboard::RenderSpectators(float x, float y, float w)
 	TextRender()->TextEx(&Cursor, aBuffer, -1);
 }
 
+void CScoreboard::RenderSpectators64(float x, float y, float w)
+{
+	char aBuf[128] = { 0 };
+	
+	float LineHeight = 35.0f;
+	float TeeSizeMod = 0.7f;
+	float Spacing = 4.0f;
+	float FontSize = 24.0f;
+	if(m_NumPlayers > 32)
+	{
+		LineHeight = 22.0f;
+		TeeSizeMod = 0.5f;
+		Spacing = 1.0f;
+		FontSize = 16.0f;
+	}
+
+	x += 10.0f;
+	float ScoreOffset = x + 10.0f, ScoreLength = 60.0f;
+	float TeeOffset = ScoreOffset + ScoreLength, TeeLength = 60 * TeeSizeMod;
+	float NameOffset = TeeOffset + TeeLength, NameLength = 300.0f - TeeLength;
+	float PingOffset = x + 610.0f, PingLength = 65.0f;
+	float CountryOffset = PingOffset - (LineHeight - Spacing - TeeSizeMod*5.0f)*2.0f, CountryLength = (LineHeight - Spacing - TeeSizeMod*5.0f)*2.0f;
+	float ClanOffset = x + 370.0f, ClanLength = 230.0f - CountryLength;
+	
+
+
+	
+	// render player entries
+	float TitleFontsize = 40.0f;
+	float HeadlineFontsize = 22.0f;
+	float tw = TextRender()->TextWidth(0, TitleFontsize, aBuf, -1);
+	CTextCursor Cursor;
+
+
+	for(int i = 0; i < MAX_CLIENTS ; i++)
+	{
+		// make sure that we render the correct team
+		const CNetObj_PlayerInfo *pInfo = m_pClient->m_Snap.m_paInfoByScore[i];
+		if(!pInfo || pInfo->m_Team != TEAM_SPECTATORS)
+			continue;
+
+
+
+		Graphics()->TextureSet(-1);
+		Graphics()->QuadsBegin();
+		Graphics()->SetColor(0.4f, 0.2f, 0.4f, 0.5f);
+		RenderTools()->DrawRoundRect(x - 10.0f, y, w, LineHeight + Spacing, 0.0f);
+		Graphics()->QuadsEnd();
+
+		// score
+		str_format(aBuf, sizeof(aBuf), "%d", clamp(pInfo->m_Score, -999, 999));
+		tw = TextRender()->TextWidth(0, FontSize, aBuf, -1);
+		TextRender()->SetCursor(&Cursor, ScoreOffset + ScoreLength - tw, y + Spacing, FontSize, TEXTFLAG_RENDER | TEXTFLAG_STOP_AT_END);
+		Cursor.m_LineWidth = ScoreLength;
+		TextRender()->TextEx(&Cursor, aBuf, -1);
+
+		// flag
+		if(m_pClient->m_Snap.m_pGameInfoObj->m_GameFlags&GAMEFLAG_FLAGS &&
+			m_pClient->m_Snap.m_pGameDataObj && (m_pClient->m_Snap.m_pGameDataObj->m_FlagCarrierRed == pInfo->m_ClientID ||
+			m_pClient->m_Snap.m_pGameDataObj->m_FlagCarrierBlue == pInfo->m_ClientID))
+		{
+			Graphics()->BlendNormal();
+			Graphics()->TextureSet(g_pData->m_aImages[IMAGE_GAME].m_Id);
+			Graphics()->QuadsBegin();
+
+			RenderTools()->SelectSprite(pInfo->m_Team == TEAM_RED ? SPRITE_FLAG_BLUE : SPRITE_FLAG_RED, SPRITE_FLAG_FLIP_X);
+
+			float Size = LineHeight;
+			IGraphics::CQuadItem QuadItem(TeeOffset + 0.0f, y - 5.0f - Spacing / 2.0f, Size / 2.0f, Size);
+			Graphics()->QuadsDrawTL(&QuadItem, 1);
+			Graphics()->QuadsEnd();
+		}
+
+		// avatar
+		CTeeRenderInfo TeeInfo = m_pClient->m_aClients[pInfo->m_ClientID].m_RenderInfo;
+		TeeInfo.m_Size *= TeeSizeMod;
+		RenderTools()->RenderTee(CAnimState::GetIdle(), &TeeInfo, EMOTE_NORMAL, vec2(1.0f, 0.0f), vec2(TeeOffset + TeeLength / 2, y + (LineHeight + Spacing) / 2));
+
+		// name
+		TextRender()->SetCursor(&Cursor, NameOffset, y + Spacing, FontSize, TEXTFLAG_RENDER | TEXTFLAG_STOP_AT_END);
+		Cursor.m_LineWidth = NameLength;
+		TextRender()->TextEx(&Cursor, m_pClient->m_aClients[pInfo->m_ClientID].m_aName, -1);
+
+		// clan
+		tw = TextRender()->TextWidth(0, FontSize, m_pClient->m_aClients[pInfo->m_ClientID].m_aClan, -1);
+		TextRender()->SetCursor(&Cursor, ClanOffset + ClanLength / 2 - tw / 2, y + Spacing, FontSize, TEXTFLAG_RENDER | TEXTFLAG_STOP_AT_END);
+		Cursor.m_LineWidth = ClanLength;
+		TextRender()->TextEx(&Cursor, m_pClient->m_aClients[pInfo->m_ClientID].m_aClan, -1);
+
+		// country flag
+		vec4 Color(1.0f, 1.0f, 1.0f, 0.5f);
+		m_pClient->m_pCountryFlags->Render(m_pClient->m_aClients[pInfo->m_ClientID].m_Country, &Color,
+			CountryOffset, y + (Spacing + TeeSizeMod*5.0f) / 2.0f, CountryLength, LineHeight - Spacing - TeeSizeMod*5.0f);
+
+		// ping
+		if(Team != TEAM_SPECTATORS)
+		{
+			str_format(aBuf, sizeof(aBuf), "%d", clamp(pInfo->m_Latency, 0, 1000));
+			tw = TextRender()->TextWidth(0, FontSize, aBuf, -1);
+			TextRender()->SetCursor(&Cursor, PingOffset + PingLength - tw, y + Spacing, FontSize, TEXTFLAG_RENDER | TEXTFLAG_STOP_AT_END);
+			Cursor.m_LineWidth = PingLength;
+			TextRender()->TextEx(&Cursor, aBuf, -1);
+		}
+
+		y += LineHeight + Spacing;
+	}
+}
+
 void CScoreboard::RenderScoreboard64(float x, float y, float w, float h, int Team, const char *pTitle, int Corners, int Max, int Start, int *Last, bool First)
 {
 	//if(Team == TEAM_SPECTATORS)
@@ -328,18 +436,26 @@ void CScoreboard::RenderScoreboard(float x, float y, float w, float h, int Team,
 	if(m_NumPlayers > 16 && !isTeam)
 	{
 		int Last = 0;
-		
-		if(m_NumPlayers <= 32)
+		int Active = m_NumPlayers - m_NumSpectators;
+		if(m_NumPlayers < 32)
 		{
 			h += 60.0f;
 			RenderScoreboard64(x - w / 2, y, w, h, Team, pTitle, CUI::CORNER_TL, 16, 0, &Last, true);
 			RenderScoreboard64(x + w / 2, y, w, h, Team, "", CUI::CORNER_TR, 16, Last+1, &Last, false);
+			if(Active < 16)
+				RenderSpectators64(x - w / 2, y + 94.0f + Active * 39.0f, w); //94 = headlineheight, 26 = lineheight + spacing
+			else
+				RenderSpectators64(x + w / 2, y + 94.0f + (Active-16) * 39.0f, w);
 		}
 		else
 		{
-			h += 120.0f;
+			h += 140.0f;
 			RenderScoreboard64(x - w / 2, y, w, h, Team, pTitle, CUI::CORNER_TL, 32, 0, &Last, true);
 			RenderScoreboard64(x + w / 2, y, w, h, Team, "", CUI::CORNER_TR, 32, Last+1, &Last, false);
+			if(Active < 32)
+				RenderSpectators64(x - w / 2, y + 94.0f + Active * 23.0f, w); //94 = headlineheight, 39 = lineheight + spacing
+			else
+				RenderSpectators64(x + w / 2, y + 94.0f + (Active - 32) * 23.0f, w);
 		}
 		return;
 	}
@@ -585,7 +701,7 @@ void CScoreboard::OnRender()
 	float h = 724.0f;
 	float TeamHeight = 0;
 	int TeamSize = 0;
-	int SpecSize = 0;
+	m_NumSpectators = 0;
 	m_NumPlayers = 0;
 	
 
@@ -601,13 +717,13 @@ void CScoreboard::OnRender()
 			m_NumPlayers++;
 		}
 		if(j == TEAM_SPECTATORS)
-			SpecSize = n;
+			m_NumSpectators = n;
 		else if(n > TeamSize)
 			TeamSize = n;
 		
 	}
 
-	if(TeamSize <= 8 && SpecSize <= 8)
+	if(TeamSize <= 8 && m_NumSpectators <= 8)
 		TeamHeight = 8 * 39.0f;
 	else
 		TeamHeight = (/*MAX_CLIENTS*/ 16-TeamSize) * 39.0f;

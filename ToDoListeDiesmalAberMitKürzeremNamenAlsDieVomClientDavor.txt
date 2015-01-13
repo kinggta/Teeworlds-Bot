@@ -3,6 +3,7 @@
 -Shader support
 -64 Player support (need to fix scoreboard)
 -Switch to "Server" menu tab when connected
+-Recent server tab
 
 [UI]
 -Complete rework
@@ -26,7 +27,6 @@ Bots
 [General]
 -Quick refresh button
 -Cache last serverlist
--Recent server tab
 -Slowly rename stuff from "13x37" to "x(Client)"
 -Login and forum connection (auth, news, version)
 

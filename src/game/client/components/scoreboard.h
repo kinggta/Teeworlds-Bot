@@ -8,6 +8,7 @@ class CScoreboard : public CComponent
 {
 	void RenderGoals(float x, float y, float w);
 	void RenderSpectators(float x, float y, float w);
+	void RenderSpectators64(float x, float y, float w);
 	void RenderScoreboard(float x, float y, float w, float h, int Team, const char *pTitle, int Corners);
 	void RenderScoreboard64(float x, float y, float w, float h, int Team, const char *pTitle, int Corners, int Max, int Start, int *Last, bool First);
 	void RenderRecordingNotification(float x);
@@ -18,6 +19,7 @@ class CScoreboard : public CComponent
 
 	bool m_Active;
 	int m_NumPlayers;
+	int m_NumSpectators;
 
 public:
 	CScoreboard();
