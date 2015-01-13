@@ -145,12 +145,9 @@ void CScoreboard::RenderSpectators64(float x, float y, float w)
 	float ClanOffset = x + 370.0f, ClanLength = 230.0f - CountryLength;
 	
 	// render player entries
-	float TitleFontsize = 40.0f;
-	float HeadlineFontsize = 22.0f;
-	float tw = TextRender()->TextWidth(0, TitleFontsize, aBuf, -1);
+	float tw = 0;
 	CTextCursor Cursor;
-
-
+	
 	for(int i = 0; i < MAX_CLIENTS ; i++)
 	{
 		// make sure that we render the correct team
