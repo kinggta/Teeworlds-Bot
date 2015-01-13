@@ -144,9 +144,6 @@ void CScoreboard::RenderSpectators64(float x, float y, float w)
 	float CountryOffset = PingOffset - (LineHeight - Spacing - TeeSizeMod*5.0f)*2.0f, CountryLength = (LineHeight - Spacing - TeeSizeMod*5.0f)*2.0f;
 	float ClanOffset = x + 370.0f, ClanLength = 230.0f - CountryLength;
 	
-
-
-	
 	// render player entries
 	float TitleFontsize = 40.0f;
 	float HeadlineFontsize = 22.0f;
@@ -160,8 +157,6 @@ void CScoreboard::RenderSpectators64(float x, float y, float w)
 		const CNetObj_PlayerInfo *pInfo = m_pClient->m_Snap.m_paInfoByScore[i];
 		if(!pInfo || pInfo->m_Team != TEAM_SPECTATORS)
 			continue;
-
-
 
 		Graphics()->TextureSet(-1);
 		Graphics()->QuadsBegin();
