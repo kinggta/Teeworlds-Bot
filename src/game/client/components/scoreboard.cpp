@@ -419,7 +419,7 @@ void CScoreboard::RenderScoreboard(float x, float y, float w, float h, int Team,
 	{
 		int Last = 0;
 		int Active = m_NumPlayers - m_NumSpectators;
-		if(m_NumPlayers < 32)
+		if(m_NumPlayers <= 32)
 		{
 			h += 60.0f;
 			RenderScoreboard64(x - w / 2, y, w, h, Team, pTitle, CUI::CORNER_TL, 16, 0, &Last, true);
