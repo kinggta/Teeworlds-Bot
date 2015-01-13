@@ -1925,8 +1925,6 @@ bool CMenus::OnMouseMove(float x, float y)
 	if(m_MousePos.x > Graphics()->ScreenWidth()) m_MousePos.x = Graphics()->ScreenWidth();
 	if(m_MousePos.y > Graphics()->ScreenHeight()) m_MousePos.y = Graphics()->ScreenHeight();
 
-	dbg_msg(0, "%f", Graphics()->ScreenHeight());
-
 	return true;
 }
 
@@ -1998,9 +1996,7 @@ void CMenus::OnStateChange(int NewState, int OldState)
 	else if (NewState == IClient::STATE_ONLINE || NewState == IClient::STATE_DEMOPLAYBACK)
 	{
 		m_Popup = POPUP_NONE;
-		dbg_msg(0, "%d", m_GamePage);
 		m_GamePage = PAGE_SERVER;
-		dbg_msg(0, "%d", m_GamePage);
 		SetActive(false);
 	}
 }
@@ -2179,9 +2175,8 @@ void CMenus::RenderBackground()
 				z = 0.5f;
 			}
 			if (z != -1.0f && Pos != vec2(0, 0))
-				pCam->Move(Pos-m_MousePos, z);
+				pCam->Move(Pos, z);
 
-			dbg_msg(0, "%f %f %f %f", m_MousePos.x, m_MousePos.y, Graphics()->ScreenWidth(), Graphics()->ScreenHeight());
 
 			/*const CSkins::CSkin *pOwnSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(g_Config.m_PlayerSkin));
 			if (pOwnSkin)
