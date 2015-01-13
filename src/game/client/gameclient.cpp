@@ -487,6 +487,32 @@ void CGameClient::OnRender()
 	if(g_Config.m_XAimbotRangeFromTuning && Client()->State() == IClient::STATE_ONLINE)
 		g_Config.m_XAimbotRange = m_Tuning.m_LaserReach;
 
+	static int64 last = 0;
+	if(g_Config.m_XRainbowSkin && last + time_freq()*5 < time_get())
+	{
+		last = time_get();
+
+		static float Hue = 1.0f;
+		Hue+=0.05f;
+		if(Hue>255)
+			Hue=0;
+		
+		int SkinColor = (int)(Hue*255.0f)<<16;
+		SkinColor += 255<<8;
+
+		if(g_Config.m_XRainbowSkin == 1)		
+			g_Config.m_PlayerColorBody = SkinColor;
+		else if(g_Config.m_XRainbowSkin == 2)
+			g_Config.m_PlayerColorFeet = SkinColor;
+		else if(g_Config.m_XRainbowSkin == 3)
+		{
+			g_Config.m_PlayerColorBody = SkinColor;
+			g_Config.m_PlayerColorFeet = SkinColor;
+		}
+		SendInfo(false);
+		m_LastSendInfo = 0;
+	}
+
 }
 
 void CGameClient::OnRelease()

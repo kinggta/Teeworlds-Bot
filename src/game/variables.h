@@ -144,7 +144,7 @@ MACRO_CONFIG_INT(XDummyColorFeet3, x_dummy_color_feet3, 65408, 0, 0xFFFFFF, CFGF
 MACRO_CONFIG_STR(XDummySkin3, x_dummy_skin3, 24, "default", CFGFLAG_CLIENT | CFGFLAG_SAVE, "Dummy skin")
 
 // Autoreconnect
-MACRO_CONFIG_INT(XAutoReconnect, x_autoreconnect, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Automatacly reconnect when server is full")
+MACRO_CONFIG_INT(XAutoReconnect, x_autoreconnect, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Automatically reconnect when server is full")
 MACRO_CONFIG_INT(XAutoReconnectTime, x_autoreconnect_time, 5, 1, 10, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Frequency time to reconnect")
 
 // Misc
@@ -154,6 +154,10 @@ MACRO_CONFIG_INT(XFriendHighlight, x_friend_highlight, 1, 0, 1, CFGFLAG_CLIENT |
 MACRO_CONFIG_STR(XFriendSkin, x_friend_skin, 24, "default", CFGFLAG_CLIENT | CFGFLAG_SAVE, "skin for highlighted friends")
 MACRO_CONFIG_INT(XEnemyHighlight, x_enemy_highlight, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Highlight enemies ingame with a special skin and color")
 MACRO_CONFIG_STR(XEnemySkin, x_enemy_skin, 24, "default", CFGFLAG_CLIENT | CFGFLAG_SAVE, "skin for highlighted enemies")
+
+// Rainbow
+MACRO_CONFIG_INT(XRainbow, x_rainbow, 0, 0, 3, CFGFLAG_CLIENT, "Activate rainbow (1=Body, 2=Feet, 3=Both")
+MACRO_CONFIG_INT(XRainbowSkin, x_rainbow_skin, 0, 0, 3, CFGFLAG_CLIENT, "Activate skin rainbow (1=Body, 2=Feet, 3=Both")
 
 
 // Account
