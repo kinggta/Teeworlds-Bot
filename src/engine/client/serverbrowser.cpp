@@ -780,7 +780,7 @@ void CServerBrowser::AddRecent(const NETADDR &Addr)
 		if(net_addr_comp(&Addr, &m_aRecentServers[i]) == 0)
 		{
 			for(int j = i; j > 0; j--)
-				m_aRecentServers[j - 1] = m_aRecentServers[j];
+				m_aRecentServers[j] = m_aRecentServers[j-1];
 			m_aRecentServers[0] = Addr;
 			return;
 		}
