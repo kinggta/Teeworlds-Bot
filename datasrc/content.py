@@ -262,7 +262,7 @@ set_emoticons = SpriteSet("emoticons", image_emoticons, 4, 4)
 set_demobuttons = SpriteSet("demobuttons", image_demobuttons, 5, 1)
 set_fileicons = SpriteSet("fileicons", image_fileicons, 8, 1)
 set_guibuttons = SpriteSet("guibuttons", image_guibuttons, 12, 4)
-set_guiicons = SpriteSet("guiicons", image_guiicons, 8, 2)
+set_guiicons = SpriteSet("guiicons", image_guiicons, 12, 2)
 set_x_menu_buttons = SpriteSet("x_menu_buttons", image_x_menu_buttons, 8, 28)
 
 container.spritesets.Add(set_particles)
@@ -404,6 +404,7 @@ container.sprites.Add(Sprite("guibutton_hover", set_guibuttons, 8,0,4,4))
 
 container.sprites.Add(Sprite("guiicon_mute", set_guiicons, 0,0,4,2))
 container.sprites.Add(Sprite("guiicon_friend", set_guiicons, 4,0,4,2))
+container.sprites.Add(Sprite("guiicon_enemy", set_guiicons, 8,0,4,2))
 
 container.sprites.Add(Sprite("x_mainbutton_editor_hot", set_x_menu_buttons, 0,0,4,4))
 container.sprites.Add(Sprite("x_mainbutton_editor_active", set_x_menu_buttons, 4,0,4,4))
