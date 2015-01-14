@@ -8,9 +8,8 @@ class CScoreboard : public CComponent
 {
 	void RenderGoals(float x, float y, float w);
 	void RenderSpectators(float x, float y, float w);
-	void RenderSpectators64(float x, float y, float w);
 	void RenderScoreboard(float x, float y, float w, float h, int Team, const char *pTitle, int Corners);
-	void RenderScoreboard64(float x, float y, float w, float h, int Team, const char *pTitle, int Corners, int Max, int Start, int *Last, bool First);
+	void RenderScoreboard64(float x, float y, float w, float h, const char *pTitle);
 	void RenderRecordingNotification(float x);
 
 	static void ConKeyScoreboard(IConsole::IResult *pResult, void *pUserData);
