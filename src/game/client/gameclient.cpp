@@ -487,6 +487,11 @@ void CGameClient::OnRender()
 	if(g_Config.m_XAimbotRangeFromTuning && Client()->State() == IClient::STATE_ONLINE)
 		g_Config.m_XAimbotRange = m_Tuning.m_LaserReach;
 
+	if(g_Config.m_XRainbow)
+		RenderTools()->m_Hue+=0.01f;
+		if(RenderTools()->m_Hue>255)
+			RenderTools()->m_Hue=0;
+
 	static int64 last = 0;
 	if(g_Config.m_XRainbowSkin && last + time_freq()*5 < time_get())
 	{

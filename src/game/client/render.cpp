@@ -178,12 +178,6 @@ void CRenderTools::RenderTee(CAnimState *pAnim, CTeeRenderInfo *pInfo, int Emote
 	Graphics()->QuadsBegin();
 	//Graphics()->QuadsDraw(pos.x, pos.y-128, 128, 128);
 
-	// Rainbow
-	static float Hue = 1.0f;
-	Hue+=0.01f;
-	if(Hue>255)
-		Hue=0;
-
 	// first pass we draw the outline
 	// second pass we draw the filling
 	for(int p = 0; p < 2; p++)
@@ -201,7 +195,7 @@ void CRenderTools::RenderTee(CAnimState *pAnim, CTeeRenderInfo *pInfo, int Emote
 				// draw body
 				if(g_Config.m_XRainbow == 1 || g_Config.m_XRainbow == 3)
 				{
-					vec3 Color = HslToRgb(vec3(Hue/255.0f, 1, 0.5f));
+					vec3 Color = HslToRgb(vec3(m_Hue/255.0f, 1, 0.5f));
 					Graphics()->SetColor(Color.r, Color.g, Color.b, 1.0f);
 				}
 				else
@@ -267,8 +261,8 @@ void CRenderTools::RenderTee(CAnimState *pAnim, CTeeRenderInfo *pInfo, int Emote
 
 			if(g_Config.m_XRainbow == 2 || g_Config.m_XRainbow == 3)
 			{
-				vec3 Color = HslToRgb(vec3(Hue/255.0f, 1, 0.5f));
-				Graphics()->SetColor(Color.r, Color.g, Color.b, 1.0f);
+				vec3 Color = HslToRgb(vec3(m_Hue/255.0f, 1, 0.5f));
+				Graphics()->SetColor(Color.r*cs, Color.g*cs, Color.b*cs, 1.0f);
 			}
 			else
 				Graphics()->SetColor(pInfo->m_ColorFeet.r*cs, pInfo->m_ColorFeet.g*cs, pInfo->m_ColorFeet.b*cs, pInfo->m_ColorFeet.a);
