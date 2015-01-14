@@ -123,7 +123,7 @@ void CMenus::RenderPlayers(CUIRect MainView)
 
 	// headline
 	Options.HSplitTop(34.0f, &ButtonBar, &Options);
-	ButtonBar.VSplitRight(330.0f, &Player, &ButtonBar);
+	ButtonBar.VSplitRight(240.0f, &Player, &ButtonBar);
 	UI()->DoLabelScaled(&Player, Localize("Player"), 24.0f, -1);
 
 	ButtonBar.HMargin(1.0f, &ButtonBar);
@@ -149,7 +149,7 @@ void CMenus::RenderPlayers(CUIRect MainView)
 	ButtonBar.VSplitLeft(Width, &Button, &ButtonBar);
 	Graphics()->TextureSet(g_pData->m_aImages[IMAGE_GUIICONS].m_Id);
 	Graphics()->QuadsBegin();
-	RenderTools()->SelectSprite(SPRITE_GUIICON_FRIEND);
+	RenderTools()->SelectSprite(SPRITE_GUIICON_ENEMY);
 	QuadItem = IGraphics::CQuadItem(Button.x, Button.y, Button.w, Button.h);
 	Graphics()->QuadsDrawTL(&QuadItem, 1);
 	Graphics()->QuadsEnd();
