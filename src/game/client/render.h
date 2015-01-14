@@ -78,6 +78,9 @@ public:
 	void MapscreenToWorld(float CenterX, float CenterY, float ParallaxX, float ParallaxY,
 		float OffsetX, float OffsetY, float Aspect, float Zoom, float *pPoints);
 
+	// Rainbow
+	float m_Hue;
+
 };
 
 #endif
