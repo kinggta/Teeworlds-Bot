@@ -1652,6 +1652,14 @@ void CClient::PumpNetwork()
 		}
 	}
 
+	while(m_InfoRequestClient.Recv(&Packet))
+	{
+		if(Packet.m_ClientID != -1)
+			continue;
+
+		ProcessConnlessPacket(&Packet);
+	}
+
 	//pump dummy
 	for(int i = 0; i < MAX_DUMMIES; i++)
 	{
@@ -1993,7 +2001,7 @@ void CClient::InitInterfaces()
 	m_pStorage = Kernel()->RequestInterface<IStorage>();
 
 	//
-	m_ServerBrowser.SetBaseInfo(&m_NetClient, m_pGameClient->NetVersion());
+	m_ServerBrowser.SetBaseInfo(&m_InfoRequestClient, m_pGameClient->NetVersion());
 	m_Friends.Init();
 }
 
@@ -2057,6 +2065,13 @@ void CClient::Run()
 			dbg_msg("client", "couldn't open socket");
 			return;
 		}
+
+		BindAddr.port = (rand() % 64511) + 1024;
+		while(!m_InfoRequestClient.Open(BindAddr, 0))
+		{
+			BindAddr.port = (rand() % 64511) + 1024;
+		}
+
 	}
 
 	// init font rendering
