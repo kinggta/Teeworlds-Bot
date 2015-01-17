@@ -53,7 +53,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	CUIRect Button, Label, Temp;
 	static float s_Scrollbar = 0;
 	static float s_ScrollValue = 0;
-	static int Page = 0;
+	static int s_Page = 0;
 	static int s_Dummy[NumDummys];
 	static int s_Identity[NumIdentities];
 	static int SelectedDummy = 0, SelectedIdentity = g_Config.m_XFakeId;
@@ -67,11 +67,11 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	MainView.HSplitTop(24.0f, &Button, &Temp);
 	Button.VSplitMid(&Button, &Label);
 	static int s_TabDummy = 0;
-	if(DoButton_MenuTab(&s_TabDummy, "Dummy", Page == 0, &Button, 0))
-		Page = 0;
+	if(DoButton_MenuTab(&s_TabDummy, "Dummy", s_Page == 0, &Button, 0))
+		s_Page = 0;
 	static int s_TabIdentity = 0;
-	if(DoButton_MenuTab(&s_TabIdentity, "Identity", Page == 1, &Label, 0))
-		Page = 1;
+	if(DoButton_MenuTab(&s_TabIdentity, "Identity", s_Page == 1, &Label, 0))
+		s_Page = 1;
 
 	// tee selector
 	Temp.HSplitTop(68.0f, &Button, &Temp);
@@ -79,10 +79,10 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	Button.HMargin(5.0f, &Button);
 	Button.VSplitLeft(7.5f, 0, &Button);
 
-	int Offset = 30.0f + 80 * ((Page ? NumIdentities : NumDummys) - 4);
+	int Offset = 30.0f + 80 * ((s_Page ? NumIdentities : NumDummys) - 4);
 	if(Offset > 0)
 		Button.x -= Offset * s_ScrollValue;
-	if(Page == 0)
+	if(s_Page == 0)
 	{
 		for(int i = 0; i < NumDummys; i++)
 		{
@@ -179,7 +179,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	Temp.HMargin(4.0f, &Temp);
 	Temp.VMargin(10.0f, &Temp);
 
-	if(Page == 0)
+	if(s_Page == 0)
 	{
 		static int s_ButtonConnect = 0;
 		static int s_ButtonCenter = 0;
@@ -190,9 +190,9 @@ void CMenus::RenderQADummy(CUIRect MainView)
 
 		if(SelectedDummy)
 		{
-			if(Client()->GetDummyFlags(SelectedDummy)&IClient::DUMMYFLAG_ACTIVE == 1)
+			if(Client()->GetDummyFlags(SelectedDummy-1)&IClient::DUMMYFLAG_ACTIVE == 1)
 			{
-				if(DoButton_Menu(&s_ButtonConnect, "Disconnect", 0, &Button))
+				if(DoButton_Menu(&s_ButtonConnect, "Disconnect", 0, &Button, NULL, vec4(0.7f, 1, 0.7f, 0.5f)))
 				{
 					Client()->DisconnectDummy(Id);
 				}
@@ -207,13 +207,13 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		}
 		Temp.VSplitLeft(30.0f, 0, &Temp);
 		Temp.VSplitLeft(100.0f, &Button, &Temp);
-		if(DoButton_Menu(&s_ButtonCenter, "Center", 0, &Button))
+		if(DoButton_Menu(&s_ButtonCenter, "Center", 0, &Button, NULL, Client()->GetCentralDummy() == SelectedDummy-1? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
 		{
 			Client()->SetCentralDummy(Id);
 		}
 		Temp.VSplitLeft(30.0f, 0, &Temp);
 		Temp.VSplitLeft(100.0f, &Button, &Temp);
-		if(DoButton_Menu(&s_ButtonInput, "Input", 0, &Button))
+		if(DoButton_Menu(&s_ButtonInput, "Input", 0, &Button, NULL, Client()->GetDummyMoving(SelectedDummy-1)? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
 		{
 			Client()->ToggleMovingDummy(Id);
 		}

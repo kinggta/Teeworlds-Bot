@@ -51,7 +51,7 @@ public:
 	int DoButton_DemoPlayer(const void *pID, const char *pText, int Checked, const CUIRect *pRect);
 	int DoButton_Sprite(const void *pID, int ImageID, int SpriteID, int Checked, const CUIRect *pRect, int Corners);
 	int DoButton_Toggle(const void *pID, int Checked, const CUIRect *pRect, bool Active, const char *pTip = NULL);
-	int DoButton_Menu(const void *pID, const char *pText, int Checked, const CUIRect *pRect, const char *pTip = NULL);
+	int DoButton_Menu(const void *pID, const char *pText, int Checked, const CUIRect *pRect, const char *pTip = NULL, vec4 Color = vec4(1,1,1,0.5f));
 	int DoButton_MenuTab(const void *pID, const char *pText, int Checked, const CUIRect *pRect, int Corners, const char *pTip = NULL);
 	int DoButton_MenuMain(const void *pID, const char *pText, int Checked, const CUIRect *pRect, vec3 Color, int Page,int Align = 0, int SpriteID = -1, const char *pTip = NULL);
 	

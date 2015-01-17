@@ -87,6 +87,8 @@ public:
 	virtual void ToggleMovingDummy(int ID) = 0;
 	virtual void SetCentralDummy(int ID) = 0;
 	virtual int GetDummyFlags(int ID) = 0;
+	virtual int GetCentralDummy() = 0;
+	virtual bool GetDummyMoving(int ID) = 0;
 
 
 	//

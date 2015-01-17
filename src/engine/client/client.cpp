@@ -300,6 +300,7 @@ CClient::CClient() : m_DemoPlayer(&m_SnapshotDelta), m_DemoRecorder(&m_SnapshotD
 	m_CentralDummy = -1;
 	for(int i = 0; i < MAX_DUMMIES; i++)
 		m_aDummyFlags[i] = 0;
+	m_MainTeeMoving = true;
 
 	//autoreconnect
 	m_QueueConnectTime = 0;
@@ -498,6 +499,7 @@ void CClient::DirectInput(int *pInput, int Size)
 void CClient::SendInput()
 {
 	int64 Now = time_get();
+	int InputList[10];
 
 	if(m_PredTick <= 0)
 		return;
@@ -508,30 +510,46 @@ void CClient::SendInput()
 	if(!Size)
 		return;
 
-	// pack input
-	CMsgPacker Msg(NETMSG_INPUT);
-	Msg.AddInt(m_AckGameTick);
-	Msg.AddInt(m_PredTick);
-	Msg.AddInt(Size);
+	{
+		// pack input
+		CMsgPacker Msg(NETMSG_INPUT);
+		Msg.AddInt(m_AckGameTick);
+		Msg.AddInt(m_PredTick);
+		Msg.AddInt(Size);
 
-	m_aInputs[m_CurrentInput].m_Tick = m_PredTick;
-	m_aInputs[m_CurrentInput].m_PredictedTime = m_PredictedTime.Get(Now);
-	m_aInputs[m_CurrentInput].m_Time = Now;
+		m_aInputs[m_CurrentInput].m_Tick = m_PredTick;
+		m_aInputs[m_CurrentInput].m_PredictedTime = m_PredictedTime.Get(Now);
+		m_aInputs[m_CurrentInput].m_Time = Now;
 
-	// pack it
-	for(int i = 0; i < Size/4; i++)
-		Msg.AddInt(m_aInputs[m_CurrentInput].m_aData[i]);
+		// pack it
+		for(int i = 0; i < Size/4; i++)
+		{
+			InputList[i] = m_aInputs[m_CurrentInput].m_aData[i];
+			Msg.AddInt(InputList[i]);
+		}
 
-	m_CurrentInput++;
-	m_CurrentInput%=200;
+		m_CurrentInput++;
+		m_CurrentInput%=200;
 
-	SendMsgEx(&Msg, MSGFLAG_FLUSH);
+		if(m_MainTeeMoving || m_CentralDummy == -1)
+			SendMsgEx(&Msg, MSGFLAG_FLUSH);
+	}
 
 	//pump dummy
 	for(int i = 0; i < MAX_DUMMIES; i++)
 	{
-		if((m_aDummyFlags[i]&DUMMYFLAG_ACTIVE) == 0 || (m_aDummyFlags[i]&DUMMYFLAG_MOVING) == 0)
+		if((m_aDummyFlags[i]&DUMMYFLAG_ACTIVE) == 0 || ((m_aDummyFlags[i]&DUMMYFLAG_MOVING) == 0 && m_CentralDummy != i))
 			continue;
+
+		// pack input
+		CMsgPacker Msg(NETMSG_INPUT);
+		Msg.AddInt(m_AckGameTick);
+		Msg.AddInt(m_PredTick);
+		Msg.AddInt(Size);
+
+		// pack it
+		for(int j = 0; j < Size/4; j++)
+			Msg.AddInt(InputList[j]);
 
 		SendMsgDummy(&Msg, MSGFLAG_FLUSH, i);
 	}
@@ -2648,18 +2666,55 @@ void CClient::ConnectDummy(int ID)
 
 void CClient::DisconnectDummy(int ID)
 {
-	m_aDummyFlags[ID] &= ~DUMMYFLAG_ACTIVE;
+	//m_aDummyFlags[ID] &= ~DUMMYFLAG_ACTIVE;
+	m_aDummyFlags[ID] = 0;
 	m_aNetDummy[ID].Disconnect(0);
+
+	if(m_CentralDummy == ID)
+		m_CentralDummy = -1;
 }
 
 void CClient::ToggleMovingDummy(int ID)
 {
-	m_aDummyFlags[ID] ^= DUMMYFLAG_MOVING;
+	if(ID < -1 || ID >= MAX_DUMMIES)
+		return;
+	if(ID == -1)
+		m_MainTeeMoving = !m_MainTeeMoving;
+	else
+	{
+		if((m_aDummyFlags[ID]&DUMMYFLAG_ACTIVE) == 0)
+			return;
+
+		m_aDummyFlags[ID] ^= DUMMYFLAG_MOVING;
+	}
 }
 
 void CClient::SetCentralDummy(int ID)
 {
+	if(ID < -1 || ID >= MAX_DUMMIES)
+		return;
+
+	if(ID != -1)
+	{
+		if((m_aDummyFlags[ID]&DUMMYFLAG_ACTIVE) == 0)
+			return;
+	}
+
 	m_CentralDummy = ID;//-1 = main char
+}
+
+bool CClient::GetDummyMoving(int ID)
+{
+	if(ID < -1 || ID >= MAX_DUMMIES)
+		return false;
+
+	if(m_CentralDummy == ID)
+		return true;
+
+	if(ID == -1)
+		return m_MainTeeMoving;
+	else
+		return (bool)(m_aDummyFlags[ID]&DUMMYFLAG_MOVING);
 }
 
 static CClient *CreateClient()

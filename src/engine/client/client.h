@@ -139,13 +139,16 @@ class CClient : public IClient, public CDemoPlayer::IListner
 	int m_CentralDummy;
 	class CNetClient m_aNetDummy[MAX_DUMMIES];
 	int m_aDummyFlags[MAX_DUMMIES];
+	bool m_MainTeeMoving;
+
+	int GetDummyFlags(int ID) { return m_aDummyFlags[ID]; }
+	int GetCentralDummy() { return m_CentralDummy; }
+	bool GetDummyMoving(int ID);
 
 	//autoreconnect
 	NETADDR m_QueueAddress;
 	int64 m_QueueConnectTime;
 	bool m_QueueActive;
-
-	int GetDummyFlags(int ID) { return m_aDummyFlags[ID]; }
 
 	int SendMsgDummy(CMsgPacker *pMsg, int Flags, int DummyID, bool System=true);
 
