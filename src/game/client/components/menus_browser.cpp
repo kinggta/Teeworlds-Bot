@@ -44,6 +44,12 @@ void CMenus::RenderServerbrowserServerList(CUIRect View)
 		CUIRect m_Spacer;
 	};
 
+	struct CGametype
+	{
+		char m_TypeName[128];
+		vec4 m_Color;
+	};
+
 	enum
 	{
 		FIXED=1,
@@ -71,6 +77,14 @@ void CMenus::RenderServerbrowserServerList(CUIRect View)
 		{COL_PLAYERS,	IServerBrowser::SORT_NUMPLAYERS,	"Players",	1, 60.0f, 0, {0}, {0}},
 		{-1,			-1,						" ",		1, 10.0f, 0, {0}, {0}},
 		{COL_PING,		IServerBrowser::SORT_PING,		"Ping",		1, 40.0f, FIXED, {0}, {0}},
+	};
+
+	static CGametype s_aGameCol[] = {
+		{"tdm", vec4((float)0x91/0xff, (float)0xff/0xff, (float)0x0/0xff, (float)0xff/0xff)},
+		{"dm", vec4((float)0x0/0xff, (float)0x66/0xff, (float)0x0/0xff, (float)0xff/0xff)},
+		{"ctf", vec4((float)0x0/0xff, (float)0xff/0xff, (float)0xff/0xff, (float)0xff/0xff)},
+		{"ddrace", vec4((float)0x8b/0xff, (float)0x00/0xff,	(float)0x8b/0xff, 1)},
+		{"zcatch", vec4((float)0xff/0xff, (float)0x80/0xff, (float)0x00/0xff, 1)},
 	};
 	// This is just for scripts/update_localization.py to work correctly (all other strings are already Localize()'d somewhere else). Don't remove!
 	// Localize("Type");
@@ -388,19 +402,44 @@ void CMenus::RenderServerbrowserServerList(CUIRect View)
 					DoButton_Icon(IMAGE_BROWSEICONS, SPRITE_BROWSE_HEART, &Icon);
 				}
 
+				float PlayerFactor = 0.0f;
+
 				if(g_Config.m_BrFilterSpectators)
+				{
 					str_format(aTemp, sizeof(aTemp), "%i/%i", pItem->m_NumPlayers, pItem->m_MaxPlayers);
+					PlayerFactor = 1.0f - (clamp(pItem->m_NumPlayers, 0, pItem->m_MaxPlayers) / (float)pItem->m_MaxPlayers);
+				}
 				else
+				{
 					str_format(aTemp, sizeof(aTemp), "%i/%i", pItem->m_NumClients, pItem->m_MaxClients);
+					PlayerFactor = 1.0f - (clamp(pItem->m_NumClients, 0, pItem->m_MaxClients) / (float)pItem->m_MaxClients);
+				}
+
+				float Hue = PlayerFactor * (120.0f / 360.0f);
+				vec3 PlayerColor = HslToRgb(vec3(Hue, 1, 0.5f));
+
+				// Leave this out?
 				if(g_Config.m_BrFilterString[0] && (pItem->m_QuickSearchHit&IServerBrowser::QUICK_PLAYER))
 					TextRender()->TextColor(0.4f,0.4f,1.0f,1);
+				//
+				else
+					TextRender()->TextColor(PlayerColor.r, PlayerColor.g, PlayerColor.b, 1);
+
 				UI()->DoLabelScaled(&Button, aTemp, 12.0f, 1);
 				TextRender()->TextColor(1,1,1,1);
+
 			}
 			else if(ID == COL_PING)
 			{
+				const int MIN_PING = 0, MAX_PING = 300;
+
+				float PingFactor = 1.0f - (clamp(pItem->m_Latency, MIN_PING, MAX_PING) / (float)MAX_PING);
+				float Hue = PingFactor * (120.0f / 360.0f);
+				vec3 PingColor = HslToRgb(vec3(Hue, 1, 0.5f));
+				TextRender()->TextColor(PingColor.r, PingColor.g, PingColor.b, 1);
 				str_format(aTemp, sizeof(aTemp), "%i", pItem->m_Latency);
 				UI()->DoLabelScaled(&Button, aTemp, 12.0f, 1);
+				TextRender()->TextColor(1,1,1,1);
 			}
 			else if(ID == COL_VERSION)
 			{
@@ -412,7 +451,23 @@ void CMenus::RenderServerbrowserServerList(CUIRect View)
 				CTextCursor Cursor;
 				TextRender()->SetCursor(&Cursor, Button.x, Button.y, 12.0f*UI()->Scale(), TEXTFLAG_RENDER|TEXTFLAG_STOP_AT_END);
 				Cursor.m_LineWidth = Button.w;
+
+				int i = 0;
+				bool found = false;
+				for(; i < sizeof(s_aGameCol)/sizeof(CGametype); i++)
+					if(str_find_nocase(pItem->m_aGameType, s_aGameCol[i].m_TypeName))
+					{
+						found = true;
+						break;
+					}
+
+				vec4 c(1,1,1,1);
+				if(found)
+					c = s_aGameCol[i].m_Color;
+					
+				TextRender()->TextColor(c.r, c.g, c.b, c.a);
 				TextRender()->TextEx(&Cursor, pItem->m_aGameType, -1);
+				TextRender()->TextColor(1,1,1,1);
 			}
 
 		}
