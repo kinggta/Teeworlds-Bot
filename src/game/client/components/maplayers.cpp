@@ -34,7 +34,7 @@ void CMapLayers::OnInit()
 
 void CMapLayers::EnvelopeUpdate()
 {
-	if(Client()->State() == IClient::STATE_DEMOPLAYBACK || (Client()->State() == IClient::STATE_OFFLINE))
+	if(Client()->State() == IClient::STATE_DEMOPLAYBACK)
 	{
 		const IDemoPlayer::CInfo *pInfo = DemoPlayer()->BaseInfo();
 		m_CurrentLocalTick = pInfo->m_CurrentTick;
@@ -77,6 +77,8 @@ void CMapLayers::EnvelopeEval(float TimeOffset, int Env, float *pChannels, void 
 
 	CMapItemEnvelope *pItem = (CMapItemEnvelope *)pThis->m_pLayers->Map()->GetItem(Start+Env, 0, 0);
 
+	//dbg_msg(0, "%f", pThis->Client()->IntraGameTick());
+
 	static float s_Time = 0.0f;
 	static float s_LastLocalTime = pThis->Client()->LocalTime();
 	if(pThis->Client()->State() == IClient::STATE_DEMOPLAYBACK)
@@ -95,6 +97,14 @@ void CMapLayers::EnvelopeEval(float TimeOffset, int Env, float *pChannels, void 
 						pThis->m_CurrentLocalTick / (float)pThis->Client()->GameTickSpeed(),
 						pThis->Client()->IntraGameTick());
 		}
+
+		pThis->RenderTools()->RenderEvalEnvelope(pPoints+pItem->m_StartPoint, pItem->m_NumPoints, 4, s_Time+TimeOffset, pChannels);
+	}
+	else if(pThis->Client()->State() == IClient::STATE_OFFLINE)
+	{
+		static int64 s_LastTime = time_get();
+		s_Time = mix(s_LastTime / (float)time_freq(), time_get() / (float)time_freq(), 10.0f);
+		s_LastTime = time_get();
 
 		pThis->RenderTools()->RenderEvalEnvelope(pPoints+pItem->m_StartPoint, pItem->m_NumPoints, 4, s_Time+TimeOffset, pChannels);
 	}
