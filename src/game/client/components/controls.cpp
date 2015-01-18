@@ -172,8 +172,10 @@ bool CControls::Aimbot()
 	if(numPlayers)
 	{
 		Args.m_LocalPos = LocalPos;
+		Args.m_MousePos = m_MousePos;
 		Args.m_pOut = &TargetPos;
 		Args.m_numPlayers = numPlayers;
+		Args.m_Bypass = g_Config.m_XAimbotBypass;
 		Client()->m_LibHandler.CallFunction[CLibHandler::LIB_USER](CLibHandler::CALL_AIMBOT, &Args);
 
 		m_InputData.m_TargetX = (int)Args.m_pOut->x;

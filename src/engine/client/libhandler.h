@@ -30,11 +30,12 @@ struct CArgs_Rainbow
 
 struct CArgs_Aimbot
 {
+	vec2 m_aEnemyPos[64];
 	vec2 m_LocalPos;
-	vec2 m_aEnemyPos[64]; //look for crashes
+	vec2 m_MousePos;
 	vec2 *m_pOut;
 	int m_numPlayers;
-	bool m_UD; // bypass bot detection
+	bool m_Bypass;
 };
 
 class CLibHandler

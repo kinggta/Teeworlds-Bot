@@ -94,6 +94,7 @@ MACRO_CONFIG_STR(XFakeSkin5, x_fake_skin5, 24, "default", CFGFLAG_CLIENT|CFGFLAG
 
 // Aimbot
 MACRO_CONFIG_INT(XAimbot, x_aimbot, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "I think you know what it does")
+MACRO_CONFIG_INT(XAimbotBypass, x_aimbot_bypass, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Bypass simple bot detections")
 MACRO_CONFIG_INT(XAimbotEnemycheck, x_aimbot_enemycheck, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Only aim at enemies")
 MACRO_CONFIG_INT(XAimbotFriendcheck, x_aimbot_friendcheck, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Do not aim at friends")
 MACRO_CONFIG_INT(XAimbotWallcheck, x_aimbot_wallcheck, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Do not target enemies behind walls when turned on")
