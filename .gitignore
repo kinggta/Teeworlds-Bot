@@ -1,13 +1,10 @@
 bam
 .bam
-cache
 config.lua
 datasrc/__pycache__
 datasrc/*.pyc
 objs
 src/game/generated
-SDL.dll
-freetype.dll
 autoexec.cfg
 log.txt
 compile_out.txt
