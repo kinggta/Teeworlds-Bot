@@ -679,6 +679,8 @@ void CClient::DisconnectWithReason(const char *pReason)
 	m_UseTempRconCommands = 0;
 	m_pConsole->DeregisterTempAll();
 	m_NetClient.Disconnect(pReason);
+	for(int i = 0; i < MAX_DUMMIES; i++)
+		m_aNetDummy[i].Disconnect(pReason);
 	SetState(IClient::STATE_OFFLINE);
 	m_pMap->Unload();
 
@@ -2415,10 +2417,25 @@ void CClient::Con_RemoveFavorite(IConsole::IResult *pResult, void *pUserData)
 		pSelf->m_ServerBrowser.RemoveFavorite(Addr);
 }
 
-void CClient::Con_ConnectDummy(IConsole::IResult *pResult, void *pUserData)
+void CClient::Con_DummyConnect(IConsole::IResult *pResult, void *pUserData)
 {
 	CClient *pSelf = (CClient *)pUserData;
-	pSelf->ConnectDummy();
+	int Id = clamp(pResult->GetInteger(0), 0, MAX_DUMMIES);
+	pSelf->ConnectDummy(Id);
+}
+
+void CClient::Con_DummyCenter(IConsole::IResult *pResult, void *pUserData)
+{
+	CClient *pSelf = (CClient *)pUserData;
+	int Id = clamp(pResult->GetInteger(0), 0, MAX_DUMMIES);
+	pSelf->SetCentralDummy(Id-1);
+}
+
+void CClient::Con_DummyInput(IConsole::IResult *pResult, void *pUserData)
+{
+	CClient *pSelf = (CClient *)pUserData;
+	int Id = clamp(pResult->GetInteger(0), 0, MAX_DUMMIES);
+	pSelf->ToggleInputDummy(Id-1);
 }
 
 const char *CClient::DemoPlayer_Play(const char *pFilename, int StorageType)
@@ -2587,7 +2604,9 @@ void CClient::RegisterCommands()
 	m_pConsole->Register("remove_favorite", "s", CFGFLAG_CLIENT, Con_RemoveFavorite, this, "Remove a server from favorites");
 	m_pConsole->Register("add_recent", "s", CFGFLAG_CLIENT, Con_AddRecent, this, "Add a server as a recent");
 
-	m_pConsole->Register("dummy_connect", "", CFGFLAG_CLIENT, Con_ConnectDummy, this, "");
+	m_pConsole->Register("dummy_connect", "i", CFGFLAG_CLIENT, Con_DummyConnect, this, "Connect a dummy");
+	m_pConsole->Register("dummy_center", "i", CFGFLAG_CLIENT, Con_DummyCenter, this, "Center a dummy");
+	m_pConsole->Register("dummy_input", "i", CFGFLAG_CLIENT, Con_DummyInput, this, "Toggle the input of a dummy");
 
 	// used for server browser update
 	m_pConsole->Chain("br_filter_string", ConchainServerBrowserUpdate, this);
@@ -2674,7 +2693,7 @@ void CClient::DisconnectDummy(int ID)
 		m_CentralDummy = -1;
 }
 
-void CClient::ToggleMovingDummy(int ID)
+void CClient::ToggleInputDummy(int ID)
 {
 	if(ID < -1 || ID >= MAX_DUMMIES)
 		return;

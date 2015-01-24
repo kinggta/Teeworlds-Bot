@@ -222,7 +222,7 @@ public:
 	void ConnectDummy();
 	void ConnectDummy(int ID);
 	void DisconnectDummy(int ID);
-	void ToggleMovingDummy(int ID);
+	void ToggleInputDummy(int ID);
 	void SetCentralDummy(int ID);
 
 	//queue functions
@@ -331,12 +331,16 @@ public:
 	static void Con_AddFavorite(IConsole::IResult *pResult, void *pUserData);
 	static void Con_AddRecent(IConsole::IResult *pResult, void *pUserData);
 	static void Con_RemoveFavorite(IConsole::IResult *pResult, void *pUserData);
-	static void Con_ConnectDummy(IConsole::IResult *pResult, void *pUserData);
 	static void Con_Play(IConsole::IResult *pResult, void *pUserData);
 	static void Con_Record(IConsole::IResult *pResult, void *pUserData);
 	static void Con_StopRecord(IConsole::IResult *pResult, void *pUserData);
 	static void Con_AddDemoMarker(IConsole::IResult *pResult, void *pUserData);
 	static void ConchainServerBrowserUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
+
+	// dummy cmd
+	static void Con_DummyConnect(IConsole::IResult *pResult, void *pUserData);
+	static void Con_DummyCenter(IConsole::IResult *pResult, void *pUserData);
+	static void Con_DummyInput(IConsole::IResult *pResult, void *pUserData);
 
 	void RegisterCommands();
 

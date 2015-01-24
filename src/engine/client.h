@@ -84,7 +84,7 @@ public:
 	virtual void SetState(int s) = 0;
 	virtual void ConnectDummy(int ID) = 0;
 	virtual void DisconnectDummy(int ID) = 0;
-	virtual void ToggleMovingDummy(int ID) = 0;
+	virtual void ToggleInputDummy(int ID) = 0;
 	virtual void SetCentralDummy(int ID) = 0;
 	virtual int GetDummyFlags(int ID) = 0;
 	virtual int GetCentralDummy() = 0;
@@ -154,6 +154,16 @@ public:
 	virtual void SnapSetStaticsize(int ItemType, int Size) = 0;
 
 	virtual int SendMsg(CMsgPacker *pMsg, int Flags) = 0;
+	virtual int SendMsgDummy(CMsgPacker *pMsg, int Flags, int DummyID, bool System = true) = 0;
+
+	template<class T>
+	int SendPackMsgDummy(T *pMsg, int Flags, int DummyID)
+	{
+		CMsgPacker Packer(pMsg->MsgID());
+		if(pMsg->Pack(&Packer))
+			return -1;
+		return SendMsgDummy(&Packer, Flags, DummyID, false);
+	}
 
 	template<class T>
 	int SendPackMsg(T *pMsg, int Flags)
@@ -161,8 +171,15 @@ public:
 		CMsgPacker Packer(pMsg->MsgID());
 		if(pMsg->Pack(&Packer))
 			return -1;
+		for(int i = 0; i < MAX_DUMMIES; i++)
+			if((GetDummyFlags(i) & IClient::DUMMYFLAG_ACTIVE) == 0 || ((GetDummyFlags(i) & IClient::DUMMYFLAG_MOVING) == 0 && GetCentralDummy() != i))
+				continue;
+			else
+				SendPackMsgDummy(pMsg, MSGFLAG_VITAL, i);
 		return SendMsg(&Packer, Flags);
 	}
+
+	
 
 	//
 	virtual const char *ErrorString() = 0;

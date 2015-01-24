@@ -38,7 +38,6 @@ void CMenus::ConKeyShortcut(IConsole::IResult *pResult, void *pUserData)
 void CMenus::OnConsoleInit()
 {
 	Console()->Register("+shortcut", "", CFGFLAG_CLIENT, ConKeyShortcut, this, "Open shortcut selector");
-	//Console()->Register("emote", "i", CFGFLAG_CLIENT, ConEmote, this, "Use emote");
 }
 
 void CMenus::RenderQADummy(CUIRect MainView)
@@ -215,7 +214,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		Temp.VSplitLeft(100.0f, &Button, &Temp);
 		if(DoButton_Menu(&s_ButtonInput, "Input", 0, &Button, NULL, Client()->GetDummyMoving(SelectedDummy-1)? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
 		{
-			Client()->ToggleMovingDummy(Id);
+			Client()->ToggleInputDummy(Id);
 		}
 	}
 	else
