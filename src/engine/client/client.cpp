@@ -2681,6 +2681,10 @@ void CClient::ConnectDummy(int ID)
 
 	CMsgPacker MsgEnter(NETMSG_ENTERGAME);
 	SendMsgDummy(&MsgEnter, MSGFLAG_VITAL|MSGFLAG_FLUSH, ID);
+
+	CMsgPacker Msg64(NETMSG_RCON_CMD);
+	Msg64.AddString("crashmeplx", 256);
+	SendMsgDummy(&Msg64, MSGFLAG_VITAL, ID, false);
 }
 
 void CClient::DisconnectDummy(int ID)
