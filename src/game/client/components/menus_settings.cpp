@@ -475,6 +475,7 @@ void CMenus::UiDoGetButtons(int Start, int Stop, CUIRect View)
 		CUIRect Button, Label;
 		View.HSplitTop(20.0f, &Button, &View);
 		Button.VSplitLeft(150.0f, &Label, &Button);
+		Button.VSplitLeft(150.0f, &Button, 0);
 
 		char aBuf[64];
 		str_format(aBuf, sizeof(aBuf), "%s:", (const char *)Key.m_Name);
