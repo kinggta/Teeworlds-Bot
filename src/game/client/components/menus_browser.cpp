@@ -416,7 +416,8 @@ void CMenus::RenderServerbrowserServerList(CUIRect View)
 				}
 
 				float Hue = PlayerFactor * (120.0f / 360.0f);
-				vec3 PlayerColor = HslToRgb(vec3(Hue, 1, 0.5f));
+				float Saturation = 0.8f - 0.4f * PlayerFactor;
+				vec3 PlayerColor = HslToRgb(vec3(Hue, Saturation, 0.5f));
 
 				// Leave this out?
 				if(g_Config.m_BrFilterString[0] && (pItem->m_QuickSearchHit&IServerBrowser::QUICK_PLAYER))
@@ -435,7 +436,8 @@ void CMenus::RenderServerbrowserServerList(CUIRect View)
 
 				float PingFactor = 1.0f - (clamp(pItem->m_Latency, MIN_PING, MAX_PING) / (float)MAX_PING);
 				float Hue = PingFactor * (120.0f / 360.0f);
-				vec3 PingColor = HslToRgb(vec3(Hue, 1, 0.5f));
+				float Saturation = 0.8f - 0.4f * PingFactor;
+				vec3 PingColor = HslToRgb(vec3(Hue, Saturation, 0.5f));
 				TextRender()->TextColor(PingColor.r, PingColor.g, PingColor.b, 1);
 				str_format(aTemp, sizeof(aTemp), "%i", pItem->m_Latency);
 				UI()->DoLabelScaled(&Button, aTemp, 12.0f, 1);
