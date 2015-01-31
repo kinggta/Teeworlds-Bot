@@ -298,9 +298,9 @@ void CSpectator::OnRender()
 		return;
 	}
 		
-	if(g_Config.m_ClShowhud && !showHud)
+	if(g_Config.m_ClShowhud && showHud == -1)
 		showHud = 1;
-	else
+	else if(showHud == -1)
 		showHud = 0;
 
 	g_Config.m_ClShowhud = 0;
@@ -362,7 +362,7 @@ void CSpectator::OnRender()
 			m_SelectedSpectatorID = i;
 			Selected = true;
 		}
-
+		
 		vec4 BackColor(0, 0, 0, 0);
 		if((NumRender%4)%2 == ((int)NumRender/4)%2)
 			BackColor = vec4(0.75f, 0.75f, 0.75f, 0.25f);
