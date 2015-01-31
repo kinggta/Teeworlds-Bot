@@ -298,7 +298,7 @@ void CSpectator::OnRender()
 		return;
 	}
 		
-	if(g_Config.m_ClShowhud || !showHud)
+	if(g_Config.m_ClShowhud && !showHud)
 		showHud = 1;
 	else
 		showHud = 0;
