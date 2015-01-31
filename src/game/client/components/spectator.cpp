@@ -11,6 +11,8 @@
 #include <game/client/animstate.h>
 #include <game/client/render.h>
 
+#include <game/client/components/chat.h>
+
 #include "spectator.h"
 
 
@@ -294,6 +296,7 @@ void CSpectator::OnRender()
 				g_Config.m_ClShowhud^=1;
 				showHud = -1;
 			}
+			m_pClient->m_pChat->m_Render = 1;
 		}
 		return;
 	}
@@ -304,6 +307,7 @@ void CSpectator::OnRender()
 		showHud = 0;
 
 	g_Config.m_ClShowhud = 0;
+	m_pClient->m_pChat->m_Render = 0;
 
 	if(!m_pClient->m_Snap.m_SpecInfo.m_Active)
 	{
@@ -374,7 +378,7 @@ void CSpectator::OnRender()
 		CTeeRenderInfo TeeInfo = m_pClient->m_aClients[i].m_RenderInfo;
 		
 		TextRender()->TextColor(1.0f, 1.0f, 1.0f, Selected?1.0f:0.5f);
-		UI()->DoLabel(&Col[NumRender%4], m_pClient->m_aClients[i].m_aName, 14.0f*UI()->Scale(), -1);
+		UI()->DoLabel(&Col[NumRender%4], m_pClient->m_aClients[i].m_aName, 20.0f*UI()->Scale(), -1);
 		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 		TeeInfo.m_Size*=0.8f;
