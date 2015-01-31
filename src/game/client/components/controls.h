@@ -15,6 +15,8 @@ public:
 	CNetObj_PlayerInput m_LastData;
 	int m_InputDirectionLeft;
 	int m_InputDirectionRight;
+	int m_InputDirectionSlowRight;
+	int m_InputDirectionSlowLeft;
 	int m_InputAimbot;
 
 	bool Triggerbot();

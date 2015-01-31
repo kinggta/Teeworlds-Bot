@@ -31,6 +31,9 @@ void CControls::OnReset()
 
 	m_InputDirectionLeft = 0;
 	m_InputDirectionRight = 0;
+
+	m_InputDirectionSlowLeft = 0;
+	m_InputDirectionSlowRight = 0;
 }
 
 void CControls::OnRelease()
@@ -86,6 +89,8 @@ void CControls::OnConsoleInit()
 	Console()->Register("+hook", "", CFGFLAG_CLIENT, ConKeyInputState, &m_InputData.m_Hook, "Hook");
 	Console()->Register("+fire", "", CFGFLAG_CLIENT, ConKeyInputCounter, &m_InputData.m_Fire, "Fire");
 	Console()->Register("+aim", "", CFGFLAG_CLIENT, ConKeyInputState, &m_InputAimbot, "Aimbot");
+	Console()->Register("+slowright", "", CFGFLAG_CLIENT, ConKeyInputState, &m_InputDirectionSlowRight, "Move slow right");
+	Console()->Register("+slowleft", "", CFGFLAG_CLIENT, ConKeyInputState, &m_InputDirectionSlowLeft, "Move left right");
 
 	{ static CInputSet s_Set = {this, &m_InputData.m_WantedWeapon, 1}; Console()->Register("+weapon1", "", CFGFLAG_CLIENT, ConKeyInputSet, (void *)&s_Set, "Switch to hammer"); }
 	{ static CInputSet s_Set = {this, &m_InputData.m_WantedWeapon, 2}; Console()->Register("+weapon2", "", CFGFLAG_CLIENT, ConKeyInputSet, (void *)&s_Set, "Switch to gun"); }
@@ -296,6 +301,26 @@ int CControls::SnapInput(int *pData)
 			m_InputData.m_Direction = -1;
 		if(!m_InputDirectionLeft && m_InputDirectionRight)
 			m_InputData.m_Direction = 1;
+
+
+		// dont question this code.. it works
+		static int FirstMove = 0;
+		if(m_InputDirectionSlowLeft)// slow left
+		{
+			FirstMove++;
+			if(FirstMove == 1)
+				m_InputData.m_Direction = -1;
+		}
+		else if(m_InputDirectionSlowRight) // slow right
+		{
+			FirstMove++;
+			if(FirstMove == 1)
+				m_InputData.m_Direction = 1;
+		}
+		m_InputDirectionSlowLeft = 0;
+		m_InputDirectionSlowRight = 0;
+		FirstMove = 0;
+
 
 		// stress testing
 		if(g_Config.m_DbgStress)
