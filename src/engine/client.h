@@ -176,10 +176,7 @@ public:
 				continue;
 			else
 				SendPackMsgDummy(pMsg, MSGFLAG_VITAL, i);
-		if(GetDummyMoving(-1))
-			return SendMsg(&Packer, Flags);
-		else
-			return 1;
+		return SendMsg(&Packer, Flags);
 	}
 
 	
