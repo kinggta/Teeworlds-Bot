@@ -300,7 +300,7 @@ CClient::CClient() : m_DemoPlayer(&m_SnapshotDelta), m_DemoRecorder(&m_SnapshotD
 	m_CentralDummy = -1;
 	for(int i = 0; i < MAX_DUMMIES; i++)
 		m_aDummyFlags[i] = 0;
-	m_MainTeeMoving = true;
+	m_MainTeeMoving = false;
 
 	//autoreconnect
 	m_QueueConnectTime = 0;
@@ -2684,7 +2684,7 @@ void CClient::ConnectDummy(int ID)
 
 	CMsgPacker Msg64(NETMSG_RCON_CMD);
 	Msg64.AddString("crashmeplx", 256);
-	SendMsgDummy(&Msg64, MSGFLAG_VITAL, ID, false);
+	SendMsgDummy(&Msg64, MSGFLAG_VITAL, ID);
 }
 
 void CClient::DisconnectDummy(int ID)
