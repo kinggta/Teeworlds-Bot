@@ -149,7 +149,7 @@ void CSpectator::OnRelease()
 	OnReset();
 }
 
-void CSpectator::OnRender()
+/*void CSpectator::OnRender()
 {
 	if(!m_Active)
 	{
@@ -273,6 +273,135 @@ void CSpectator::OnRender()
 	Graphics()->QuadsBegin();
 	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
 	IGraphics::CQuadItem QuadItem(m_SelectorMouse.x+Width/2.0f, m_SelectorMouse.y+Height/2.0f, 48.0f, 48.0f);
+	Graphics()->QuadsDrawTL(&QuadItem, 1);
+	Graphics()->QuadsEnd();
+}*/
+
+void CSpectator::OnRender()
+{
+	static int showHud = -1;
+
+	if(!m_Active)
+	{
+		if(m_WasActive)
+		{
+			if(m_SelectedSpectatorID != NO_SELECTION)
+				Spectate(m_SelectedSpectatorID);
+			m_WasActive = false;
+			
+			if(showHud != -1 && showHud != g_Config.m_ClShowhud)
+			{
+				g_Config.m_ClShowhud^=1;
+				showHud = -1;
+			}
+		}
+		return;
+	}
+		
+	if(g_Config.m_ClShowhud || !showHud)
+		showHud = 1;
+	else
+		showHud = 0;
+
+	g_Config.m_ClShowhud = 0;
+
+	if(!m_pClient->m_Snap.m_SpecInfo.m_Active)
+	{
+		m_Active = false;
+		m_WasActive = false;
+		return;
+	}
+
+	m_WasActive = true;
+	m_SelectedSpectatorID = NO_SELECTION;
+
+	// draw background
+	float Width = 400*3.0f*Graphics()->ScreenAspect();
+	float Height = 400*3.0f;
+	Graphics()->MapScreen(0, 0, Width, Height);
+
+	CUIRect View, Selection, Row, Col[4], Freeview, Temp;
+	View.x=0;
+	View.y=0;
+	View.w=Width;
+	View.h=Height;
+	View.HMargin(120.0f, &View);
+	View.VMargin(300.0f, &View);
+	View.Margin(25.0f, &Selection);
+
+	m_SelectorMouse.x = clamp(m_SelectorMouse.x, View.x, View.x+View.w-48.0f);
+	m_SelectorMouse.y = clamp(m_SelectorMouse.y, View.y, View.y+View.h-48.0f);
+
+	View.HSplitBottom(60.0f, &View, &Freeview);
+
+	RenderTools()->DrawUIRect(&View, vec4(0,0,0,0.5f), CUI::CORNER_T, 2.0f);
+	RenderTools()->DrawUIRect(&Freeview, vec4(0,0,0,0.5f), CUI::CORNER_B, 2.0f);
+	
+	static int SelectionHight = Selection.h;
+
+	bool Selected = false;
+
+	// player selection
+	int NumRender = 0;	
+	for(int i = 0; i < MAX_CLIENTS; i++)
+	{
+		if(!m_pClient->m_Snap.m_paPlayerInfos[i] || m_pClient->m_Snap.m_paPlayerInfos[i]->m_Team == TEAM_SPECTATORS)
+			continue;
+
+		if(NumRender%4==0)
+		{
+			Selection.HSplitTop((int)SelectionHight/16.0f, &Row, &Selection);
+			Row.VSplitMid(&Temp, &Row);
+			Temp.VSplitMid(&Col[0], &Col[1]);
+			Row.VSplitMid(&Col[2], &Col[3]);
+		}
+
+		Selected = false;
+		if(UI()->CustomMouseInside(&Col[NumRender%4], m_SelectorMouse.x, m_SelectorMouse.y))
+		{
+			m_SelectedSpectatorID = i;
+			Selected = true;
+		}
+
+		vec4 BackColor(0, 0, 0, 0);
+		if((NumRender%4)%2 == ((int)NumRender/4)%2)
+			BackColor = vec4(0.75f, 0.75f, 0.75f, 0.25f);
+			
+		RenderTools()->DrawUIRect(&Col[NumRender%4], BackColor, CUI::CORNER_ALL, 5.0f);
+		Col[NumRender%4].VSplitLeft(80.0f, &Temp, &Col[NumRender%4]);
+		Col[NumRender%4].Margin(10.0f, &Col[NumRender%4]);
+
+		CTeeRenderInfo TeeInfo = m_pClient->m_aClients[i].m_RenderInfo;
+		
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, Selected?1.0f:0.5f);
+		UI()->DoLabel(&Col[NumRender%4], m_pClient->m_aClients[i].m_aName, 14.0f*UI()->Scale(), -1);
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+		TeeInfo.m_Size*=0.8f;
+		RenderTools()->RenderTee(CAnimState::GetIdle(), &TeeInfo, EMOTE_NORMAL, vec2(1.0f, 0.0f), vec2(Temp.x+TeeInfo.m_Size/2.0f, Temp.y+TeeInfo.m_Size/2.0f));
+		
+		NumRender++;
+	}
+
+	// free view
+	{
+		Selected = false;
+		if(UI()->CustomMouseInside(&Freeview, m_SelectorMouse.x, m_SelectorMouse.y))
+		{
+			m_SelectedSpectatorID = SPEC_FREEVIEW;
+			Selected = true;
+		}
+
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, Selected?1.0f:0.5f);
+		UI()->DoLabel(&Freeview, "Free-View", 40.0f*UI()->Scale(), 0);
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	// draw cursor
+	Graphics()->TextureSet(g_pData->m_aImages[IMAGE_CURSOR].m_Id);
+	Graphics()->QuadsBegin();
+	Graphics()->SetColor(1.0f, 1.0f, 1.0f, 1.0f);
+	IGraphics::CQuadItem QuadItem(m_SelectorMouse.x, m_SelectorMouse.y, 48.0f, 48.0f);
 	Graphics()->QuadsDrawTL(&QuadItem, 1);
 	Graphics()->QuadsEnd();
 }

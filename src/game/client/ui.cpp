@@ -53,6 +53,13 @@ int CUI::MouseInside(const CUIRect *r)
 	return 0;
 }
 
+int CUI::CustomMouseInside(const CUIRect *r, int MousePosX, int MousePosY)
+{
+	if(MousePosX >= r->x && MousePosX <= r->x+r->w && MousePosY >= r->y && MousePosY <= r->y+r->h)
+		return 1;
+	return 0;
+}
+
 void CUI::ConvertMouseMove(float *x, float *y)
 {
 	float Fac = (float)(g_Config.m_UiMousesens)/g_Config.m_InpMousesens;
