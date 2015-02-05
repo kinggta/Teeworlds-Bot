@@ -291,9 +291,9 @@ void CSpectator::OnRender()
 				Spectate(m_SelectedSpectatorID);
 			m_WasActive = false;
 			
-			if(showHud != -1 && showHud != g_Config.m_ClShowhud)
+			if(showHud != -1)
 			{
-				g_Config.m_ClShowhud^=1;
+				g_Config.m_ClShowhud=showHud;
 				showHud = -1;
 			}
 			m_pClient->m_pChat->m_Render = 1;
@@ -331,19 +331,34 @@ void CSpectator::OnRender()
 	View.h=Height;
 	View.HMargin(120.0f, &View);
 	View.VMargin(300.0f, &View);
-	View.Margin(25.0f, &Selection);
+	View.HSplitTop(60.0f, &Freeview, &Selection);
+	Selection.Margin(25.0f, &Selection);
 
 	m_SelectorMouse.x = clamp(m_SelectorMouse.x, View.x, View.x+View.w-48.0f);
 	m_SelectorMouse.y = clamp(m_SelectorMouse.y, View.y, View.y+View.h-48.0f);
 
-	View.HSplitBottom(60.0f, &View, &Freeview);
-
-	RenderTools()->DrawUIRect(&View, vec4(0,0,0,0.5f), CUI::CORNER_T, 2.0f);
-	RenderTools()->DrawUIRect(&Freeview, vec4(0,0,0,0.5f), CUI::CORNER_B, 2.0f);
+	RenderTools()->DrawUIRect(&View, vec4(0,0,0,0.5f), CUI::CORNER_ALL, 10.0f);
 	
 	static int SelectionHight = Selection.h;
 
 	bool Selected = false;
+
+	// free view
+	{
+		Freeview.HSplitTop(10.0f, 0, &Freeview);
+		Freeview.VMargin(25.0f, &Freeview);
+		RenderTools()->DrawUIRect(&Freeview, vec4(0.75f, 0.75f, 0.75f, 0.25f), CUI::CORNER_ALL, 5.0f);
+		Selected = false;
+		if(UI()->CustomMouseInside(&Freeview, m_SelectorMouse.x, m_SelectorMouse.y))
+		{
+			m_SelectedSpectatorID = SPEC_FREEVIEW;
+			Selected = true;
+		}
+
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, Selected?1.0f:0.5f);
+		UI()->DoLabel(&Freeview, "Free-View", 40.0f*UI()->Scale(), 0);
+		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 
 	// player selection
 	int NumRender = 0;	
@@ -385,20 +400,6 @@ void CSpectator::OnRender()
 		RenderTools()->RenderTee(CAnimState::GetIdle(), &TeeInfo, EMOTE_NORMAL, vec2(1.0f, 0.0f), vec2(Temp.x+TeeInfo.m_Size/2.0f, Temp.y+TeeInfo.m_Size/2.0f));
 		
 		NumRender++;
-	}
-
-	// free view
-	{
-		Selected = false;
-		if(UI()->CustomMouseInside(&Freeview, m_SelectorMouse.x, m_SelectorMouse.y))
-		{
-			m_SelectedSpectatorID = SPEC_FREEVIEW;
-			Selected = true;
-		}
-
-		TextRender()->TextColor(1.0f, 1.0f, 1.0f, Selected?1.0f:0.5f);
-		UI()->DoLabel(&Freeview, "Free-View", 40.0f*UI()->Scale(), 0);
-		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// draw cursor
