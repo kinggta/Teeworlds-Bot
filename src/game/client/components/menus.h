@@ -266,6 +266,7 @@ private:
 	void FriendlistOnUpdate();
 
 	// found in menus.cpp
+	void RenderCurrentPage(CUIRect MainView, int Page);
 	int Render();
 	//void render_background();
 	//void render_loading(float percent);
@@ -319,8 +320,10 @@ private:
 	void Render13x37(CUIRect MainView);
 
 	// found in menus_quickaccess
+	//smoothies
+	int64 m_QAATransitionTime;
 	bool m_QAActive;
-	bool m_QAWasActive;
+	bool QAActive();
 	void RenderQA(CUIRect MainView);
 	void RenderQADummy(CUIRect MainView);
 	void RenderQAMark(CUIRect MainView);

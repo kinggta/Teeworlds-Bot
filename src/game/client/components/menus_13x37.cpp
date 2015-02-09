@@ -390,7 +390,6 @@ void CMenus::Render13x37Econ(CUIRect MainView)
 
 void CMenus::Render13x37Extras(CUIRect MainView)
 {
-	dbg_msg(0, "");
 }
 void CMenus::Render13x37Esp(CUIRect MainView)
 {

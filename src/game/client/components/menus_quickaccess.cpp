@@ -25,6 +25,8 @@
 #include "menus.h"
 #include "skins.h"
 
+#define QAA_TRANSITION_TIME 10.5f
+
 
 void CMenus::ConKeyShortcut(IConsole::IResult *pResult, void *pUserData)
 {
@@ -32,6 +34,7 @@ void CMenus::ConKeyShortcut(IConsole::IResult *pResult, void *pUserData)
 	if(pSelf->Client()->State() == IClient::STATE_ONLINE)
 	{
 		pSelf->m_QAActive = pResult->GetInteger(0) != 0;
+		pSelf->m_QAATransitionTime = time_get();
 	}
 }
 
@@ -249,20 +252,16 @@ void CMenus::RenderQAMark(CUIRect MainView)
 
 void CMenus::RenderQA(CUIRect MainView)
 {
-	if(!m_QAActive)
-	{
-		m_QAWasActive = false;
+	float TransitionRate = clamp( 1-(time_get()-m_QAATransitionTime)/(float)time_freq()*QAA_TRANSITION_TIME, 0.0f, 1.0f);
+
+	if(!m_QAActive && TransitionRate <= 0)
 		return;
-	}
 
 	/*if(m_pClient->m_Snap.m_SpecInfo.m_Active)
 	{
 		m_QAActive = false;
-		m_QAWasActive = false;
 		return;
 	}*/
-
-	m_QAWasActive = true;
 
 	CUIRect Screen = *UI()->Screen();
 
@@ -274,6 +273,12 @@ void CMenus::RenderQA(CUIRect MainView)
 	MainView.HSplitTop(160.0f, &r, 0);
 	r.w = 380.0f;
 	r.x = MainView.w / 2 - r.w / 2;
+
+	if(m_QAActive)
+		r.y -= TransitionRate*r.h;
+	else
+		r.y -= (1.0f-TransitionRate)*r.h;
+
 	RenderQADummy(r);
 
 	if(!UI()->MouseInside(&r))
@@ -281,14 +286,15 @@ void CMenus::RenderQA(CUIRect MainView)
 
 	}
 
-
-
-
-
 	//Graphics()->TextureSet(g_pData->m_aImages[IMAGE_CURSOR].m_Id);
 	//Graphics()->QuadsBegin();
 	//Graphics()->SetColor(1, 1, 1, 1);
 	//IGraphics::CQuadItem QuadItem(m_SelectorMouse.x/*+Screen.w/2*/, m_SelectorMouse.y/*+Screen.h/2*/, 24, 24);
 	//Graphics()->QuadsDrawTL(&QuadItem, 1);
 	//Graphics()->QuadsEnd();
+}
+
+bool CMenus::QAActive()
+{
+	return m_QAActive | (m_QAATransitionTime > time_get()-time_freq()/QAA_TRANSITION_TIME);
 }

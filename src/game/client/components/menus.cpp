@@ -735,13 +735,11 @@ int CMenus::RenderMenubar(CUIRect r)
 
 	
 
-
 	if(NewPage != -1)
 	{
-		if(Client()->State() == IClient::STATE_OFFLINE)
-			g_Config.m_UiPage = NewPage;
-		else
-			m_GamePage = NewPage;
+		//DRY - cleancode
+		int *pChangingPage = Client()->State() == IClient::STATE_OFFLINE?&g_Config.m_UiPage:&m_GamePage;
+		*pChangingPage = NewPage;
 	}
 
 	return 0;
@@ -2039,7 +2037,7 @@ void CMenus::OnRender()
 		m_Popup = POPUP_PURE;
 	}
 
-	if(!IsActive() && !m_QAActive)
+	if(!IsActive() && !QAActive())
 	{
 		m_EscapePressed = false;
 		m_EnterPressed = false;
@@ -2088,8 +2086,7 @@ void CMenus::OnRender()
 	if(Client()->State() != IClient::STATE_DEMOPLAYBACK && IsActive())
 		Render();
 
-	if(m_QAActive)
-		RenderQA(*UI()->Screen());
+	RenderQA(*UI()->Screen());
 
 	// render cursor
 	Graphics()->TextureSet(g_pData->m_aImages[IMAGE_CURSOR].m_Id);
