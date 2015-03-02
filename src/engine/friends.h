@@ -26,7 +26,7 @@ public:
 		FRIEND_CLAN,
 		FRIEND_PLAYER,
 
-		MAX_FRIENDS=128,
+		MAX_FRIENDS=256,
 	};
 
 	enum
