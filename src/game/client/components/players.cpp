@@ -541,7 +541,7 @@ void CPlayers::OnRender()
 		int FriendState = m_pClient->Friends()->IsFriend(m_pClient->m_aClients[i].m_aName, m_pClient->m_aClients[i].m_aClan, true);
 		bool HasNinja = m_pClient->m_Snap.m_aCharacters[i].m_Cur.m_Weapon == WEAPON_NINJA;
 		m_aRenderInfo[i] = m_pClient->m_aClients[i].m_RenderInfo;
-		
+
 		if(HasNinja)
 		{
 			// change the skin for the player to the ninja
@@ -553,12 +553,12 @@ void CPlayers::OnRender()
 				else
 				{
 					m_aRenderInfo[i].m_Texture = m_pClient->m_pSkins->Get(Skin)->m_OrgTexture;
-					m_aRenderInfo[i].m_ColorBody = vec4(1,1,1,1);
-					m_aRenderInfo[i].m_ColorFeet = vec4(1,1,1,1);
+					m_aRenderInfo[i].m_ColorBody = vec4(1, 1, 1, 1);
+					m_aRenderInfo[i].m_ColorFeet = vec4(1, 1, 1, 1);
 				}
 			}
 		}
-		if(g_Config.m_XFriendHighlight && FriendState == IFriends::CONTACT_FRIEND)
+		if(g_Config.m_XFriendHighlight && FriendState == IFriends::CONTACT_FRIEND && !m_pClient->m_Snap.m_pGameInfoObj->m_GameFlags&GAMEFLAG_TEAMS)
 		{
 			int Skin = m_pClient->m_pSkins->Find(g_Config.m_XFriendSkin);
 			if(Skin == -1)
@@ -568,7 +568,7 @@ void CPlayers::OnRender()
 			m_aRenderInfo[i].m_ColorBody = vec4(0.2f, 1.0f, 0.2f, 1.0f);
 			m_aRenderInfo[i].m_ColorFeet = vec4(0.2f, 1.0f, 0.2f, 1.0f);
 		}
-		if(g_Config.m_XEnemyHighlight && FriendState == IFriends::CONTACT_ENEMY)
+		if(g_Config.m_XEnemyHighlight && FriendState == IFriends::CONTACT_ENEMY && !m_pClient->m_Snap.m_pGameInfoObj->m_GameFlags&GAMEFLAG_TEAMS)
 		{
 			int Skin = m_pClient->m_pSkins->Find(g_Config.m_XEnemySkin);
 			if(Skin == -1)
@@ -580,7 +580,7 @@ void CPlayers::OnRender()
 			m_aRenderInfo[i].m_ColorFeet = vec4(1.0f, 0.2f, 0.2f, 1.0f);
 		}
 	}
-
+	
 	// render other players in two passes, first pass we render the other, second pass we render our self
 	for(int p = 0; p < 4; p++)
 	{
