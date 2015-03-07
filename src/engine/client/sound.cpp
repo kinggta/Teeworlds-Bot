@@ -8,6 +8,8 @@
 
 #include <engine/shared/config.h>
 
+#include <game/generated/protocol.h>
+
 #include "SDL.h"
 
 #include "sound.h"
@@ -252,8 +254,8 @@ int CSound::Update()
 	// update volume
 	int WantedVolume = g_Config.m_SndVolume;
 
-	if(!m_pGraphics->WindowActive() && g_Config.m_SndNonactiveMute)
-		WantedVolume = 0;
+	//if(!m_pGraphics->WindowActive() && g_Config.m_SndNonactiveMute)
+	//	WantedVolume = 0;
 
 	if(WantedVolume != m_SoundVolume)
 	{
@@ -446,6 +448,10 @@ int CSound::Play(int ChannelID, int SampleID, int Flags, float x, float y)
 {
 	int VoiceID = -1;
 	int i;
+
+	if(!m_pGraphics->WindowActive() && g_Config.m_SndNonactiveMute
+		&& !(g_Config.m_XSoundHighlight && SampleID == 109)) //todo: get SOUND_CHAT_HIGHLIGHT dynamically
+		return VoiceID;
 
 	lock_wait(m_SoundLock);
 

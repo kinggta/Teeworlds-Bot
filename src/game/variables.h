@@ -155,6 +155,9 @@ MACRO_CONFIG_INT(XFriendHighlight, x_friend_highlight, 1, 0, 1, CFGFLAG_CLIENT |
 MACRO_CONFIG_STR(XFriendSkin, x_friend_skin, 24, "default", CFGFLAG_CLIENT | CFGFLAG_SAVE, "skin for highlighted friends")
 MACRO_CONFIG_INT(XEnemyHighlight, x_enemy_highlight, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Highlight enemies ingame with a special skin and color")
 MACRO_CONFIG_STR(XEnemySkin, x_enemy_skin, 24, "default", CFGFLAG_CLIENT | CFGFLAG_SAVE, "skin for highlighted enemies")
+MACRO_CONFIG_INT(XSoundHighlight, x_sound_highlight, 1, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Play highlight sound even when minimized")
+MACRO_CONFIG_INT(XSoundMuteChat, x_sound_mute_chat, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Mute chat sound")
+MACRO_CONFIG_INT(XSoundMuteServer, x_sound_mute_server, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Mute server chat sound")
 
 // Rainbow
 MACRO_CONFIG_INT(XRainbow, x_rainbow, 0, 0, 3, CFGFLAG_CLIENT, "Activate rainbow (1=Body, 2=Feet, 3=Both")
