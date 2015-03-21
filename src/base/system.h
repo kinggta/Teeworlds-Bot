@@ -1200,6 +1200,7 @@ void net_stats(NETSTATS *stats);
 int str_toint(const char *str);
 float str_tofloat(const char *str);
 int str_isspace(char c);
+int str_isdigit(char c);
 char str_uppercase(char c);
 unsigned str_quickhash(const char *str);
 
