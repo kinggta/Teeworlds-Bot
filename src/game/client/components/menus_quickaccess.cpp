@@ -24,6 +24,7 @@
 #include "countryflags.h"
 #include "menus.h"
 #include "skins.h"
+#include "teefiles.h"
 
 
 void CMenus::ConKeyShortcut(IConsole::IResult *pResult, void *pUserData)
@@ -47,14 +48,13 @@ void CMenus::RenderQADummy(CUIRect MainView)
 #define FAKE_HELPER(part) g_Config.m_XFake##part
 #define FAKE(part ,id) id == 1 ? FAKE_HELPER(part ## 1) : id == 2 ? FAKE_HELPER(part ## 2) : id == 3 ? FAKE_HELPER(part ## 3) : id == 4 ? FAKE_HELPER(part ## 4) : FAKE_HELPER(part ## 5) 
 
-	const int NumDummys = 3 + 1;
-	const int NumIdentities = 5 + 1; // + original name
+	const int NumDummys = MAX_DUMMIES + 1; // + 3 dummies + main tee
+	const int NumIdentities = m_pClient->m_pTeeFiles->Num(); 
 	CUIRect Button, Label, Temp;
 	static float s_Scrollbar = 0;
 	static float s_ScrollValue = 0;
 	static int s_Page = 0;
 	static int s_Dummy[NumDummys];
-	static int s_Identity[NumIdentities];
 	static int SelectedDummy = 0, SelectedIdentity = g_Config.m_XFakeId;
 	
 
@@ -135,20 +135,21 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	{
 		for(int i = 1; i < NumIdentities; i++)
 		{
+			CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(i);
 			Button.VSplitLeft(80.0f, &Label, &Button);
-			if(DoButton_Menu(&s_Identity[i], "", 0, &Label))
+			if(DoButton_Menu(pTee, "", 0, &Label))
 				SelectedIdentity = i;
 			const CSkins::CSkin *pSkin = NULL;
 			CTeeRenderInfo SkinInfo;
 
 			if(i)
 			{
-				pSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(FAKE(Skin, i)));
-				if(FAKE(UseCustomColor, i))
+				pSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pTee->m_aSkin));
+				if(pTee->m_UseCustomColor)
 				{
 					SkinInfo.m_Texture = pSkin->m_ColorTexture;
-					SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(FAKE(ColorBody, i));
-					SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(FAKE(ColorFeet, i));
+					SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorBody);
+					SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorFeet);
 				}
 				else
 				{
@@ -163,7 +164,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 
 			Label.HSplitBottom(10.0f, 0, &Label);
 			RenderTools()->DrawUIRect(&Label, SelectedIdentity == i ? vec4(0.2f, 1.0f, 0.2f, 0.5f) : vec4(0.0f, 0.0f, 0.0f, 0.5f), CUI::CORNER_B, 4.0f);
-			UI()->DoLabelScaled(&Label, i ? FAKE(Name, i) : g_Config.m_PlayerName, 8.0f, 0);
+			UI()->DoLabelScaled(&Label, i ? pTee->m_aName : g_Config.m_PlayerName, 8.0f, 0);
 			Button.VSplitLeft(15.0f, 0, &Button);
 		}
 	}
@@ -223,12 +224,13 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		Temp.HMargin(12.0f, &Button);
 		if(DoButton_Menu(&s_ButtonUse, "Use Identity", 0, &Button))
 		{
-			str_format(g_Config.m_PlayerName, sizeof(g_Config.m_PlayerName), FAKE(Name, SelectedIdentity));
-			str_format(g_Config.m_PlayerClan, sizeof(g_Config.m_PlayerClan), FAKE(Clan, SelectedIdentity));
-			str_format(g_Config.m_PlayerSkin, sizeof(g_Config.m_PlayerSkin), FAKE(Skin, SelectedIdentity));
-			g_Config.m_PlayerUseCustomColor = FAKE(UseCustomColor, SelectedIdentity);
-			g_Config.m_PlayerColorBody = FAKE(ColorBody, SelectedIdentity);
-			g_Config.m_PlayerColorFeet = FAKE(ColorFeet, SelectedIdentity);
+			CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(SelectedIdentity);
+			str_format(g_Config.m_PlayerName, sizeof(g_Config.m_PlayerName), pTee->m_aName);
+			str_format(g_Config.m_PlayerClan, sizeof(g_Config.m_PlayerClan), pTee->m_aClan);
+			str_format(g_Config.m_PlayerSkin, sizeof(g_Config.m_PlayerSkin), pTee->m_aSkin);
+			g_Config.m_PlayerUseCustomColor = pTee->m_UseCustomColor;
+			g_Config.m_PlayerColorBody = pTee->m_ColorBody;
+			g_Config.m_PlayerColorFeet = pTee->m_ColorFeet;
 			m_pClient->SendInfo(false);
 		}
 
