@@ -24,45 +24,48 @@
 #include "countryflags.h"
 #include "menus.h"
 #include "skins.h"
+#include "teefiles.h"
 
 void CMenus::Render13x37Identity(CUIRect MainView)
 {
-#define FAKE_HELPER(part) g_Config.m_XFake##part
-#define FAKE(part ,id) id == 0 ? FAKE_HELPER(part ## 1) : id == 1 ? FAKE_HELPER(part ## 2) : id == 2 ? FAKE_HELPER(part ## 3) : id == 3 ? FAKE_HELPER(part ## 4) : FAKE_HELPER(part ## 5)
 
 	// render background
-	CUIRect Temp, TabBar, RestartWarning;
-	CUIRect Button, Label, View;;
+	CUIRect Temp, TabBar, Button, Label, View;
 	static int Page = 0;
-	const char *aTabs[] = {
-		FAKE(Name, 0),
-		FAKE(Name, 1),
-		FAKE(Name, 2),
-		FAKE(Name, 3),
-		FAKE(Name, 4) };
-	const int numID = (int)(sizeof(aTabs)/sizeof(*aTabs));
+		
+	const int Test = 64; //Todo: remove this and code it the right way
+	int numID = m_pClient->m_pTeeFiles->Num();
 
 	MainView.VSplitLeft(240.0f, &TabBar, &MainView);
 	TabBar.VSplitRight(2.0f, &TabBar, &Button);
 	RenderTools()->DrawUIRect(&Button, vec4(0.0f, 0.8f, 0.6f, 0.5f), 0, 0);
 
+	if(!numID)
+		return;
+
 
 
 	for(int i = 0; i < numID; i++)
 	{
+		CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(i);
 		TabBar.HSplitTop(24.0f, &Button, &TabBar);
-		if(DoButton_MenuTab(aTabs[i], "", Page == i, &Button, 0))
+		if(DoButton_MenuTab(pTee->m_aName, "", Page == i, &Button, 0))
 			Page = i;
+
+		Button.VSplitRight(Button.h, 0, &Temp);
+		Temp.Margin(4.0f, &Temp);
+		if(DoButton_Menu(pTee, Localize("X"), 0, &Temp, "", vec4(0.75f, 0.25f, 0.25f, 0.75f)))
+			m_pClient->m_pTeeFiles->Remove(i);
 
 		Button.HSplitTop(Button.h*0.25f, 0, &Label);
 
-		const CSkins::CSkin *pOwnSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(FAKE(Skin, i)));
+		const CSkins::CSkin *pOwnSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pTee->m_aSkin));
 		CTeeRenderInfo OwnSkinInfo;
-		if(FAKE(UseCustomColor, i))
+		if(pTee->m_UseCustomColor)
 		{
 			OwnSkinInfo.m_Texture = pOwnSkin->m_ColorTexture;
-			OwnSkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(FAKE(ColorBody, i));
-			OwnSkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(FAKE(ColorFeet, i));
+			OwnSkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorBody);
+			OwnSkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorFeet);
 		}
 		else
 		{
@@ -71,12 +74,27 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 			OwnSkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 		OwnSkinInfo.m_Size = 26.0f*UI()->Scale();
-		RenderTools()->RenderTee(CAnimState::GetIdle(), &OwnSkinInfo, 0, vec2(1, 0), vec2(Button.x + Button.w - OwnSkinInfo.m_Size, Button.y + Button.h *0.6f));
+		RenderTools()->RenderTee(CAnimState::GetIdle(), &OwnSkinInfo, 0, vec2(1, 0), vec2(Button.x + OwnSkinInfo.m_Size, Button.y + Button.h *0.6f));
 		Button.HMargin(2.0f, &Button);
 		Button.HSplitBottom(16.0f, 0, &Button);
-		UI()->DoLabelScaled(&Button, aTabs[i], 14.0f, 0);
+		UI()->DoLabelScaled(&Button, pTee->m_aName, 14.0f, 0);
 		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
+	CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(Page);
+	static int s_ButtonAdd = 0;
+
+	TabBar.HSplitTop(24.0f, &Button, &TabBar);
+	Button.VSplitRight(Button.h, 0, &Temp);
+	Temp.Margin(4.0f, &Temp);
+	if(DoButton_Menu(&s_ButtonAdd, Localize("+"), 0, &Temp, "", vec4(0.25f, 0.75f, 0.25f, 0.75f)))
+	{
+		CTeeFiles::CTee Tee;
+		mem_zero(&Tee, sizeof(Tee));
+		str_format(Tee.m_aName, sizeof(Tee.m_aName), "nameless tee");
+		str_format(Tee.m_aSkin, sizeof(Tee.m_aSkin), "default");
+		m_pClient->m_pTeeFiles->Add(Tee);
+	}
+
 	MainView.Margin(10.0f, &MainView);
 
 	MainView.Margin(10.0f, &MainView);
@@ -86,43 +104,27 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	View.HSplitTop(20.0f, &Button, &View);
 	Button.VSplitLeft(230.0f, &Button, 0);
 
-	static int s_UseID[numID];
+	static int s_UseID = 0; //TODO ändern
 
-	if(DoButton_Menu(&s_UseID[Page], Localize("Use ID"), 0, &Button))
+	if(DoButton_Menu(&s_UseID, Localize("Use ID"), 0, &Button))
 	{
-		str_format(g_Config.m_PlayerName, sizeof(g_Config.m_PlayerName), FAKE(Name, Page));
-		str_format(g_Config.m_PlayerClan, sizeof(g_Config.m_PlayerClan), FAKE(Clan, Page));
-		str_format(g_Config.m_PlayerSkin, sizeof(g_Config.m_PlayerSkin), FAKE(Skin, Page));
-		g_Config.m_PlayerUseCustomColor = FAKE(UseCustomColor, Page);
-		g_Config.m_PlayerColorBody = FAKE(ColorBody, Page);
-		g_Config.m_PlayerColorFeet = FAKE(ColorFeet, Page);
+		str_format(g_Config.m_PlayerName, sizeof(g_Config.m_PlayerName), pTee->m_aName);
+		str_format(g_Config.m_PlayerClan, sizeof(g_Config.m_PlayerClan), pTee->m_aClan);
+		str_format(g_Config.m_PlayerSkin, sizeof(g_Config.m_PlayerSkin), pTee->m_aSkin);
+		g_Config.m_PlayerUseCustomColor = pTee->m_UseCustomColor;
+		g_Config.m_PlayerColorBody = pTee->m_ColorBody;
+		g_Config.m_PlayerColorFeet = pTee->m_ColorFeet;
 		m_NeedSendinfo = true;
 	}
 
-	int *pUseCustomColor = NULL, *pColorBody = NULL, *pColorFeet = NULL;
-	char *pName, *pClan, *pSkin;
-
-#undef FAKE_HELPER
-#define FAKE_HELPER(part) &g_Config.m_XFake##part
-	pUseCustomColor = FAKE(UseCustomColor, Page);
-	pColorBody = FAKE(ColorBody, Page);
-	pColorFeet = FAKE(ColorFeet, Page);
-#undef FAKE_HELPER
-#define FAKE_HELPER(part) &g_Config.m_XFake##part[0]
-	pName = FAKE(Name, Page);
-	pClan = FAKE(Clan, Page);
-	pSkin = FAKE(Skin, Page);
-#undef FAKE
-#undef FAKE_HELPER
-
 	// skin info
-	const CSkins::CSkin *pOwnSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pSkin));
+	const CSkins::CSkin *pOwnSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pTee->m_aSkin));
 	CTeeRenderInfo OwnSkinInfo;
-	if(*pUseCustomColor)
+	if(pTee->m_UseCustomColor)
 	{
 		OwnSkinInfo.m_Texture = pOwnSkin->m_ColorTexture;
-		OwnSkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(*pColorBody);
-		OwnSkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(*pColorFeet);
+		OwnSkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorBody);
+		OwnSkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorFeet);
 	}
 	else
 	{
@@ -144,21 +146,21 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	RenderTools()->RenderTee(CAnimState::GetIdle(), &OwnSkinInfo, 0, vec2(1, 0), vec2(Label.x+30.0f, Label.y+28.0f));
 	Label.HSplitTop(15.0f, 0, &Label);;
 	Label.VSplitLeft(70.0f, 0, &Label);
-	UI()->DoLabelScaled(&Label, pSkin, 14.0f, -1, 150.0f);
+	UI()->DoLabelScaled(&Label, pTee->m_aSkin, 14.0f, -1, 150.0f);
 
 	// custom colour selector
 	View.HSplitTop(20.0f, 0, &View);
 	View.HSplitTop(20.0f, &Button, &View);
 	Button.VSplitLeft(230.0f, &Button, 0);
-	if(DoButton_CheckBox(pUseCustomColor, Localize("Custom colors"), *pUseCustomColor, &Button))
+	if(DoButton_CheckBox(&pTee->m_UseCustomColor, Localize("Custom colors"), pTee->m_UseCustomColor, &Button))
 	{
-		*pUseCustomColor = *pUseCustomColor?0:1;
+		pTee->m_UseCustomColor ^= 1;
 		m_NeedSendinfo = true;
 	}
 
 	View.HSplitTop(5.0f, 0, &View);
 	//View.HSplitTop(82.5f, &Label, &View);
-	if(*pUseCustomColor)
+	if(pTee->m_UseCustomColor)
 	{
 		CUIRect aRects[2];
 		Label.VSplitMid(&aRects[0], &aRects[1]);
@@ -169,8 +171,8 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 		aRects[1].VSplitRight(10.0f, &aRects[1], 0);
 
 		int *paColors[2];
-		paColors[0] = pColorBody;
-		paColors[1] = pColorFeet;
+		paColors[0] = &pTee->m_ColorBody;
+		paColors[1] = &pTee->m_ColorFeet;
 
 		const char *paParts[] = {
 			Localize("Body"),
@@ -179,7 +181,7 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 			Localize("Hue"),
 			Localize("Sat."),
 			Localize("Lht.")};
-		static int s_aColorSlider[numID][2][3] = {{0}};
+		static int s_aColorSlider[2][3] = { { 0 } };
 
 		for(int i = 0; i < 2; i++)
 		{
@@ -197,7 +199,7 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 				Button.HMargin(2.0f, &Button);
 
 				float k = ((PrevColor>>((2-s)*8))&0xff) / 255.0f;
-				k = DoScrollbarH(&s_aColorSlider[Page][i][s], &Button, k);
+				k = DoScrollbarH(&s_aColorSlider[i][s], &Button, k);
 				Color <<= 8;
 				Color += clamp((int)(k*255), 0, 255);
 				UI()->DoLabelScaled(&Label, paLabels[s], 14.0f, -1);
@@ -220,7 +222,7 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	str_format(aBuf, sizeof(aBuf), "%s:", Localize("Name"));
 	UI()->DoLabelScaled(&Label, aBuf, 14.0, -1);
 	static float s_OffsetName = 0.0f;
-	if(DoEditBox(pName, &Button, pName, sizeof(g_Config.m_PlayerName), 14.0f, &s_OffsetName))
+	if(DoEditBox(&pTee->m_aName, &Button, pTee->m_aName, sizeof(g_Config.m_PlayerName), 14.0f, &s_OffsetName))
 		m_NeedSendinfo = true;
 
 	// player clan
@@ -231,51 +233,51 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	str_format(aBuf, sizeof(aBuf), "%s:", Localize("Clan"));
 	UI()->DoLabelScaled(&Label, aBuf, 14.0, -1);
 	static float s_OffsetClan = 0.0f;
-	if(DoEditBox(pClan, &Button, pClan, sizeof(g_Config.m_PlayerClan), 14.0f, &s_OffsetClan))
+	if(DoEditBox(&pTee->m_aClan, &Button, pTee->m_aClan, sizeof(g_Config.m_PlayerClan), 14.0f, &s_OffsetClan))
 		m_NeedSendinfo = true;
 
 	MainView.HSplitTop(10.0f, 0, &MainView);
-	static bool s_InitSkinlist[numID] = {false};
-	static sorted_array<const CSkins::CSkin *> s_paSkinList[numID];
-	static float s_ScrollValue[numID] = {0.0f};
+	static bool s_InitSkinlist = false;
+	static sorted_array<const CSkins::CSkin *> s_paSkinList;
+	static float s_ScrollValue = {0.0f};
 
-	if(!s_InitSkinlist[Page])
+	if(!s_InitSkinlist)
 	{
-		s_paSkinList[Page].clear();
+		s_paSkinList.clear();
 		for(int i = 0; i < m_pClient->m_pSkins->Num(); ++i)
 		{
 			const CSkins::CSkin *s = m_pClient->m_pSkins->Get(i);
 			// no special skins
 			if(s->m_aName[0] == 'x' && s->m_aName[1] == '_')
 				continue;
-			s_paSkinList[Page].add(s);
+			s_paSkinList.add(s);
 		}
-		s_InitSkinlist[Page] = true;
+		s_InitSkinlist = true;
 	}
 
 	int OldSelected = -1;
-	UiDoListboxStart(&s_InitSkinlist[Page], &MainView, 50.0f, Localize("Skins"), "", s_paSkinList[Page].size(), 4, OldSelected, s_ScrollValue[Page]);
+	UiDoListboxStart(&s_InitSkinlist, &MainView, 50.0f, Localize("Skins"), "", s_paSkinList.size(), 4, OldSelected, s_ScrollValue);
 
-	for(int i = 0; i < s_paSkinList[Page].size(); i++)
+	for(int i = 0; i < s_paSkinList.size(); i++)
 	{
 		
-		const CSkins::CSkin *s = s_paSkinList[Page][i];
+		const CSkins::CSkin *s = s_paSkinList[i];
 
 		if(s == 0)
 			continue;
 
-		if(str_comp(s->m_aName, pSkin) == 0)
+		if(str_comp(s->m_aName, pTee->m_aSkin) == 0)
 			OldSelected = i;
 
-		CListboxItem Item = UiDoListboxNextItem(&s_paSkinList[Page][i], OldSelected == i);
+		CListboxItem Item = UiDoListboxNextItem(&s_paSkinList[i], OldSelected == i);
 		if(Item.m_Visible)
 		{
 			CTeeRenderInfo Info;
-			if(*pUseCustomColor)
+			if(pTee->m_UseCustomColor)
 			{
 				Info.m_Texture = s->m_ColorTexture;
-				Info.m_ColorBody = m_pClient->m_pSkins->GetColorV4(*pColorBody);
-				Info.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(*pColorFeet);
+				Info.m_ColorBody = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorBody);
+				Info.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorFeet);
 			}
 			else
 			{
@@ -290,7 +292,7 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 
 			if(g_Config.m_Debug)
 			{
-				vec3 BloodColor = *pUseCustomColor ? m_pClient->m_pSkins->GetColorV3(*pColorBody) : s->m_BloodColor;
+				vec3 BloodColor = pTee->m_UseCustomColor ? m_pClient->m_pSkins->GetColorV3(pTee->m_ColorBody) : s->m_BloodColor;
 				Graphics()->TextureSet(-1);
 				Graphics()->QuadsBegin();
 				Graphics()->SetColor(BloodColor.r, BloodColor.g, BloodColor.b, 1.0f);
@@ -301,10 +303,10 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 		}
 	}
 
-	const int NewSelected = UiDoListboxEnd(&s_ScrollValue[Page], 0);
+	const int NewSelected = UiDoListboxEnd(&s_ScrollValue, 0);
 	if(OldSelected != NewSelected)
 	{
-		str_format(pSkin, sizeof(s_paSkinList[Page][NewSelected]->m_aName), s_paSkinList[Page][NewSelected]->m_aName);
+		str_format(pTee->m_aSkin, sizeof(s_paSkinList[NewSelected]->m_aName), s_paSkinList[NewSelected]->m_aName);
 		m_NeedSendinfo = true;
 	}
 }
@@ -405,8 +407,7 @@ void CMenus::Render13x37Dummy(CUIRect MainView)
 #define DUMMY(part ,id) id == 0 ? DUMMY_HELPER(part ## 1) : id == 1 ? DUMMY_HELPER(part ## 2) : DUMMY_HELPER(part ## 3)
 
 	// render background
-	CUIRect Temp, TabBar, RestartWarning;
-	CUIRect Button, Label, View;;
+	CUIRect Temp, TabBar, Button, Label, View;
 	static int Page = 0;
 	const char *aTabs[] = {
 		DUMMY(Name, 0),
