@@ -95,7 +95,19 @@ void CTeeFiles::Save()
 				Rename = true;
 			}
 			else
-				str_format(aFilename, sizeof(aFilename), pTee->m_aFilename);
+			{ 
+				char aNewIndex[4];
+				char aOldIndex[4];
+				str_format(aNewIndex, sizeof(aNewIndex), "%03d", i);
+				str_format(aOldIndex, sizeof(aOldIndex), pTee->m_aFilename);
+				if(str_toint(aNewIndex) != str_toint(aOldIndex))
+				{
+					str_format(aFilename, sizeof(aFilename), pTee->m_aFilename);
+					for(int i = 0; i < 3; i++)
+						aFilename[i] = aNewIndex[i];
+					Rename = true;
+				}
+			}
 		}
 
 		if(Rename)
@@ -109,7 +121,6 @@ void CTeeFiles::Save()
 
 			str_format(aBuf, sizeof(aBuf), "renamed '%s' to %s", pTee->m_aFilename, aFilename);
 			Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
-			dbg_msg(0, aBuf);
 		}
 
 		str_format(aBuf, sizeof(aBuf), "xclient/teefiles/%s", aFilename);
