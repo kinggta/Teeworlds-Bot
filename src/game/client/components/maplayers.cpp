@@ -220,7 +220,7 @@ void CMapLayers::OnRender()
 				}
 			}
 
-			if(Render && !IsGameLayer)
+			if(Render && !IsGameLayer && m_pLayers->GetGroupEx(g)->m_Visible && m_pLayers->GetLayerEx(pGroup->m_StartLayer+l)->m_Visible)
 			{
 				//layershot_begin();
 

@@ -218,6 +218,7 @@ public:
 
 	CClient();
 
+	char *GetMapFileName() { return m_aMapdownloadFilename; }
 	//dummy functions
 	void ConnectDummy();
 	void ConnectDummy(int ID);

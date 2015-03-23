@@ -80,6 +80,7 @@ public:
 	CLibHandler m_LibHandler;
 
 	virtual class IEngineMap *Map() = 0;
+	virtual char *GetMapFileName() = 0;
 
 	virtual void SetState(int s) = 0;
 	virtual void ConnectDummy(int ID) = 0;

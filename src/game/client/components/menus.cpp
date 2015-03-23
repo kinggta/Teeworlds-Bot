@@ -272,6 +272,41 @@ int CMenus::DoButton_CheckBox_Number(const void *pID, const char *pText, int Che
 	return DoButton_CheckBox_Common(pID, pText, aBuf, pRect);
 }
 
+int CMenus::DoButton_DragBarV(const void *pID, const CUIRect *pRect, int Corners, float *pHeight, float Min, float Max, vec4 Color)
+{
+	RenderTools()->DrawUIRect(pRect, Color, Corners, 5.0f);
+
+	CUIRect Pommel;
+	Pommel.w = Pommel.h = 4.0f;
+	for(int i = 0; i < 3; i++)
+	{
+		Pommel.x = pRect->x+pRect->w/4.0f*(i+1)-Pommel.w/2.0f;
+		Pommel.y = pRect->y+pRect->h*0.35f;
+		RenderTools()->DrawUIRect(&Pommel, vec4(1, 1, 1, 0.5f)*ButtonColorMul(pID), CUI::CORNER_ALL, 2.0f);
+	}
+	for(int i = 0; i < 2; i++)
+	{
+		Pommel.x = pRect->x+pRect->w/8.0f*(i*2+3)-Pommel.w/2.0f;
+		Pommel.y = pRect->y+pRect->h*0.65f;
+		RenderTools()->DrawUIRect(&Pommel, vec4(1, 1, 1, 0.5f)*ButtonColorMul(pID), CUI::CORNER_ALL, 2.0f);
+	}
+
+	int ButtonValue = UI()->DoButtonLogic(pID, "", false, pRect);
+
+	static int VShift = 0.0f;
+	if(UI()->ActiveItem() == pID && (UI()->MouseButtonClicked(0) || UI()->MouseButtonClicked(1)))
+		VShift = UI()->MouseY()-pRect->y;
+
+	float ScreenHeight = UI()->Screen()->w/Graphics()->ScreenAspect()-(pRect->y-*pHeight)-pRect->h;
+	if(UI()->ActiveItem() == pID)
+		*pHeight = clamp(UI()->MouseY()-(pRect->y-*pHeight)-VShift, Min, min(ScreenHeight, Max));
+
+	*pHeight = clamp(*pHeight, Min, min(ScreenHeight, Max));
+
+	return ButtonValue;
+}
+
+
 int CMenus::DoEditBox(void *pID, const CUIRect *pRect, char *pStr, unsigned StrSize, float FontSize, float *Offset, bool Hidden, int Corners)
 {
 	int Inside = UI()->MouseInside(pRect);

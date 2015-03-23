@@ -1,5 +1,11 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
+
+#include <engine/client.h>
+#include <engine/storage.h>
+#include <engine/shared/datafile.h>
+#include <game/gamecore.h>
+
 #include "layers.h"
 
 CLayers::CLayers()
@@ -11,6 +17,9 @@ CLayers::CLayers()
 	m_pGameGroup = 0;
 	m_pGameLayer = 0;
 	m_pMap = 0;
+
+	m_pMapGroups.clear();
+	m_pMapLayers.clear();
 }
 
 void CLayers::Init(class IKernel *pKernel)
@@ -19,16 +28,29 @@ void CLayers::Init(class IKernel *pKernel)
 	m_pMap->GetType(MAPITEMTYPE_GROUP, &m_GroupsStart, &m_GroupsNum);
 	m_pMap->GetType(MAPITEMTYPE_LAYER, &m_LayersStart, &m_LayersNum);
 
+	m_pMapGroups.clear();
+	m_pMapLayers.clear();
+
 	for(int g = 0; g < NumGroups(); g++)
 	{
+		char aGroupName[128];
 		CMapItemGroup *pGroup = GetGroup(g);
+
+		IntsToStr(pGroup->m_aName, sizeof(aGroupName)/sizeof(int), aGroupName);
+		for(int i = 0; i < 8; i++)
+		dbg_msg(0, "%i %s", g, aGroupName+i);
+		m_pMapGroups.add(new CMapGroupEx(true, aGroupName));
+
 		for(int l = 0; l < pGroup->m_NumLayers; l++)
 		{
+			char aLayerName[128];
+			mem_zero(&aLayerName, sizeof(aLayerName));
 			CMapItemLayer *pLayer = GetLayer(pGroup->m_StartLayer+l);
 
 			if(pLayer->m_Type == LAYERTYPE_TILES)
 			{
 				CMapItemLayerTilemap *pTilemap = reinterpret_cast<CMapItemLayerTilemap *>(pLayer);
+				IntsToStr(pTilemap->m_aName, sizeof(aLayerName)/sizeof(int), aLayerName);
 				if(pTilemap->m_Flags&TILESLAYERFLAG_GAME)
 				{
 					m_pGameLayer = pTilemap;
@@ -48,20 +70,36 @@ void CLayers::Init(class IKernel *pKernel)
 						m_pGameGroup->m_ClipW = 0;
 						m_pGameGroup->m_ClipH = 0;
 					}
-
-					break;
 				}
 			}
+			else if(pLayer->m_Type == LAYERTYPE_QUADS)
+			{
+				CMapItemLayerQuads *pQuads = reinterpret_cast<CMapItemLayerQuads *>(pLayer);
+				IntsToStr(pQuads->m_aName, sizeof(aLayerName)/sizeof(int), aLayerName);
+			}
+
+			m_pMapLayers.add(new CMapLayerEx(true, aLayerName));
 		}
 	}
 }
 
-CMapItemGroup *CLayers::GetGroup(int Index) const
+CMapItemGroup *CLayers::GetGroup(int Index)
 {
 	return static_cast<CMapItemGroup *>(m_pMap->GetItem(m_GroupsStart+Index, 0, 0));
 }
 
-CMapItemLayer *CLayers::GetLayer(int Index) const
+CMapItemLayer *CLayers::GetLayer(int Index)
 {
 	return static_cast<CMapItemLayer *>(m_pMap->GetItem(m_LayersStart+Index, 0, 0));
+}
+
+
+CMapGroupEx *CLayers::GetGroupEx(int Index)
+{
+	return m_pMapGroups[Index];
+}
+
+CMapLayerEx *CLayers::GetLayerEx(int Index)
+{
+	return m_pMapLayers[Index];
 }

@@ -25,6 +25,8 @@
 #include "menus.h"
 #include "skins.h"
 
+static char MapVisionH[] = { -30, -104, -112 };
+static char MapVisionV[] = { -30, -104, -110 };
 
 void CMenus::ConKeyShortcut(IConsole::IResult *pResult, void *pUserData)
 {
@@ -246,6 +248,129 @@ void CMenus::RenderQAMark(CUIRect MainView)
 
 }
 
+void CMenus::RenderQAMapHiding()
+{
+	static int s_DragBar = 0;
+	static float s_Height = 0.0f;
+	const float x = 5, y = 228, w = 128;
+	static float s_ScrollValue = 0.0f;
+
+	/*Graphics()->TextureSet(-1);
+	Graphics()->QuadsBegin();
+	Graphics()->SetColor(0.0f, 0.0f, 0.0f, 0.5f);
+
+	Graphics()->QuadsDrawTL(&IGraphics::CQuadItem(x, y, w, s_Height), 1);
+	Graphics()->QuadsEnd();*/
+
+	CUIRect HeightDragRect;
+	HeightDragRect.x = x;
+	HeightDragRect.y = y+s_Height;
+	HeightDragRect.w = w;
+	HeightDragRect.h = 32;
+	DoButton_DragBarV(&s_DragBar, &HeightDragRect, CUI::CORNER_B, &s_Height, 80.0f, 400);
+
+	CUIRect MainView;
+	MainView.x = x;
+	MainView.y = y;
+	MainView.w = w;
+	MainView.h = s_Height;
+
+	int NumElements = 0;
+
+	for(int i = 0; i < Layers()->NumGroups(); i++)
+		for(int l = 0; l < Layers()->GetGroup(i)->m_NumLayers; l++)
+			NumElements++;
+
+	UiDoListboxStart(&s_ScrollValue, &MainView, 16.0f, Localize("Map"), "", NumElements, 1, -1, s_ScrollValue, 0.0f, 0.0f);
+
+	char aBuf[256];
+	for(int i = 0; i < Layers()->NumGroups(); i++)
+	{
+		CMapItemGroup *pGroup = Layers()->GetGroup(i);
+		CMapGroupEx *pGroupEx = Layers()->GetGroupEx(i);
+		if (!pGroup || !pGroupEx)
+			continue;
+
+		CListboxItem ItemGroup = UiDoListboxNextItem(pGroup, false);
+		if(ItemGroup.m_Visible)
+		{
+			CUIRect Button = ItemGroup.m_Rect;
+			Button.h -= 3.0f;
+			Button.w -= 8.0f;
+			str_format(aBuf, sizeof(aBuf), "%s %s", pGroupEx->m_aName, pGroupEx->m_Visible?MapVisionV:MapVisionH);
+			if(DoButton_Menu(&pGroupEx->m_ButtonID, aBuf, 0, &Button, ""))
+			{
+				pGroupEx->m_Visible = !pGroupEx->m_Visible;
+
+				//for(int l = 0; l < pGroup->m_NumLayers; l++)
+					//Layers()->GetLayerEx(i)->m_Visible = pGroupEx->m_Visible;
+			}
+		}
+
+		for(int l = 0; l < pGroup->m_NumLayers; l++)
+		{
+			CMapItemLayer *pLayer = Layers()->GetLayer(pGroup->m_StartLayer+l);
+			CMapLayerEx *pLayerEx = Layers()->GetLayerEx(pGroup->m_StartLayer+l);
+			CMapItemLayerTilemap *pTilemap = reinterpret_cast<CMapItemLayerTilemap *>(pLayer);
+			if(!pLayer || !pLayerEx)
+				continue;
+
+			CListboxItem ItemLayer = UiDoListboxNextItem(pLayer, false);
+			if(ItemLayer.m_Visible)
+			{
+				CUIRect Button = ItemLayer.m_Rect;
+				Button.h -= 3.0f;
+				str_format(aBuf, sizeof(aBuf), "%s %s", pLayerEx->m_aName, pLayerEx->m_Visible?MapVisionV:MapVisionH);
+				if(DoButton_Menu(&pLayerEx->m_ButtonID, aBuf, 0, &Button, "", pGroupEx->m_Visible?vec4(1,1,1,0.5f):vec4(0.5f,0.5f,0.5f,0.5f)))
+				{
+					pLayerEx->m_Visible = !pLayerEx->m_Visible;
+					//if(pLayerEx->m_Visible)
+						//pGroupEx->m_Visible = true;
+				}
+			}
+		}
+	}
+
+	UiDoListboxEnd(&s_ScrollValue, 0);
+
+	//vec4 Color = vec4(0.0f, 0.0f, 0.0f, 0.55f);
+	//if(UI()->MouseInside(&HeightDragRect))//MouseButtonClicked
+	//{
+
+	//	Color = vec4(0.0f, 0.0f, 0.0f, 0.8f);
+	//	if(UI()->MouseButton(0))
+	//	{
+	//		s_Height = clamp(UI()->MouseY()-y-16, 0.0f, 300.0f);
+	//		Color = vec4(0.0f, 0.0f, 0.0f, 0.7f);
+	//	}
+	//}
+
+	//RenderTools()->DrawUIRect(&HeightDragRect, Color, CUI::CORNER_B, 10.0f);
+
+	//Graphics()->QuadsDrawTL(&IGraphics::CQuadItem(HeightDragRect.x, HeightDragRect.y, HeightDragRect.w, HeightDragRect.h), 1);
+
+	/*int CurHeight = 0;
+	for(int g = 0; g < Layers()->NumGroups(); g++)
+	{
+		CMapItemGroup *pGroup = Layers()->GetGroup(g);
+		if (!pGroup)
+			return;
+
+		int Height = pGroup->m_NumLayers*18;
+		Graphics()->QuadsDraw(&IGraphics::CQuadItem(x, y+CurHeight, Height, 32), 1);
+
+		for(int l = 0; l < pGroup->m_NumLayers; l++)
+		{
+			CMapItemLayer *pLayer = Layers()->GetLayer(pGroup->m_StartLayer+l);
+
+			Graphics()->QuadsDraw(&IGraphics::CQuadItem(x, y+CurHeight+l*16, 16, 25), 1);
+		}
+
+		CurHeight += Height;
+	}*/
+
+
+}
 
 void CMenus::RenderQA(CUIRect MainView)
 {
@@ -265,7 +390,6 @@ void CMenus::RenderQA(CUIRect MainView)
 	m_QAWasActive = true;
 
 	CUIRect Screen = *UI()->Screen();
-
 	Graphics()->MapScreen(Screen.x, Screen.y, Screen.w, Screen.h);
 
 	Graphics()->BlendNormal();
@@ -276,12 +400,12 @@ void CMenus::RenderQA(CUIRect MainView)
 	r.x = MainView.w / 2 - r.w / 2;
 	RenderQADummy(r);
 
+	RenderQAMapHiding();
+
 	if(!UI()->MouseInside(&r))
 	{
 
 	}
-
-
 
 
 

@@ -263,7 +263,7 @@ static float gs_ListBoxScrollValue;
 static bool gs_ListBoxItemActivated;
 
 void CMenus::UiDoListboxStart(const void *pID, const CUIRect *pRect, float RowHeight, const char *pTitle, const char *pBottomText, int NumItems,
-								int ItemsPerRow, int SelectedIndex, float ScrollValue, float FontSize)
+								int ItemsPerRow, int SelectedIndex, float ScrollValue, float FontSize, int BottomCorners)
 {
 	CUIRect Scroll, Row;
 	CUIRect View = *pRect;
@@ -277,7 +277,7 @@ void CMenus::UiDoListboxStart(const void *pID, const CUIRect *pRect, float RowHe
 
 	// draw footers
 	View.HSplitBottom(ms_ListheaderHeight, &View, &Footer);
-	RenderTools()->DrawUIRect(&Footer, vec4(1,1,1,0.25f), CUI::CORNER_B, 5.0f);
+	RenderTools()->DrawUIRect(&Footer, vec4(1,1,1,0.25f), BottomCorners, 5.0f);
 	Footer.VSplitLeft(10.0f, 0, &Footer);
 	UI()->DoLabel(&Footer, pBottomText, FinalFontSize, 0);
 

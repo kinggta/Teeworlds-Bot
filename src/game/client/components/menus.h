@@ -59,6 +59,8 @@ public:
 	int DoButton_CheckBox(const void *pID, const char *pText, int Checked, const CUIRect *pRect, const char *pTip = NULL);
 	int DoButton_CheckBox_Number(const void *pID, const char *pText, int Checked, const CUIRect *pRect, const char *pTip = NULL);
 
+	int DoButton_DragBarV(const void *pID, const CUIRect *pRect, int Corners, float *pHeight, float Min, float Max, vec4 Color = vec4(1,1,1,0.5f));
+
 private:
 
 	/*static void ui_draw_menu_button(const void *id, const char *text, int checked, const CUIRect *r, const void *extra);
@@ -97,7 +99,7 @@ private:
 	};
 
 	void UiDoListboxStart(const void *pID, const CUIRect *pRect, float RowHeight, const char *pTitle, const char *pBottomText, int NumItems,
-						int ItemsPerRow, int SelectedIndex, float ScrollValue, float FontSize = 0.0f);
+						int ItemsPerRow, int SelectedIndex, float ScrollValue, float FontSize = 0.0f, int BottomCorners = CUI::CORNER_B);
 	CListboxItem UiDoListboxNextItem(const void *pID, bool Selected = false);
 	CListboxItem UiDoListboxNextRow();
 	int UiDoListboxEnd(float *pScrollValue, bool *pItemActivated);
@@ -324,6 +326,7 @@ private:
 	void RenderQA(CUIRect MainView);
 	void RenderQADummy(CUIRect MainView);
 	void RenderQAMark(CUIRect MainView);
+	void RenderQAMapHiding();
 	static void ConKeyShortcut(IConsole::IResult *pResult, void *pUserData);
 
 	void SetActive(bool Active);
