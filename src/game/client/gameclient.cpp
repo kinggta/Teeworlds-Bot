@@ -47,6 +47,7 @@
 #include "components/scoreboard.h"
 #include "components/skins.h"
 #include "components/sounds.h"
+#include "components/teefiles.h"
 #include "components/spectator.h"
 #include "components/voting.h"
 
@@ -63,6 +64,7 @@ static CBinds gs_Binds;
 static CParticles gs_Particles;
 static CMenus gs_Menus;
 static CSkins gs_Skins;
+static CTeeFiles gs_TeeFiles;
 static CCountryFlags gs_CountryFlags;
 static CFlow gs_Flow;
 static CHud gs_Hud;
@@ -112,6 +114,7 @@ void CGameClient::OnConsoleInit()
 	m_pParticles = &::gs_Particles;
 	m_pMenus = &::gs_Menus;
 	m_pSkins = &::gs_Skins;
+	m_pTeeFiles = &::gs_TeeFiles;
 	m_pCountryFlags = &::gs_CountryFlags;
 	m_pChat = &::gs_Chat;
 	m_pFlow = &::gs_Flow;
@@ -130,6 +133,7 @@ void CGameClient::OnConsoleInit()
 
 	// make a list of all the systems, make sure to add them in the corrent render order
 	m_All.Add(m_pSkins);
+	m_All.Add(m_pTeeFiles);
 	m_All.Add(m_pCountryFlags);
 	m_All.Add(m_pMapimages);
 	m_All.Add(m_pEffects); // doesn't render anything, just updates effects
@@ -619,7 +623,11 @@ void CGameClient::OnStateChange(int NewState, int OldState)
 		m_All.m_paComponents[i]->OnStateChange(NewState, OldState);
 }
 
-void CGameClient::OnShutdown() {}
+void CGameClient::OnShutdown() 
+{
+	m_pTeeFiles->Save();
+}
+
 void CGameClient::OnEnterGame() {}
 
 void CGameClient::OnGameOver()

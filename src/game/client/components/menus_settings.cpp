@@ -841,6 +841,17 @@ void CMenus::RenderSettingsSound(CUIRect MainView)
 		g_Config.m_SndVolume = (int)(DoScrollbarH(&g_Config.m_SndVolume, &Button, g_Config.m_SndVolume/100.0f)*100.0f);
 		MainView.HSplitTop(20.0f, 0, &MainView);
 	}
+
+	MainView.HSplitTop(20.0f, &Button, &MainView);
+	if(DoButton_CheckBox(&g_Config.m_XSoundHighlight, Localize("Play highlight sound when minimized"), g_Config.m_XSoundHighlight, &Button))
+		g_Config.m_XSoundHighlight ^= 1;
+
+	MainView.HSplitTop(20.0f, &Button, &MainView);
+	if(DoButton_CheckBox(&g_Config.m_XSoundMuteChat, Localize("Mute chat sound"), g_Config.m_XSoundMuteChat, &Button))
+		g_Config.m_XSoundMuteChat ^= 1;
+	MainView.HSplitTop(20.0f, &Button, &MainView);
+	if(DoButton_CheckBox(&g_Config.m_XSoundMuteServer, Localize("Mute server chat sound"), g_Config.m_XSoundMuteServer, &Button))
+		g_Config.m_XSoundMuteServer ^= 1;
 }
 
 class CLanguage
