@@ -154,8 +154,8 @@ bool CControls::Aimbot()
 			LocalTeam = ((const CNetObj_PlayerInfo *)pInfo)->m_Team;
 			continue;
 		}
-		EnemyVel = vec2(EnemyChar.m_Cur.m_VelX, EnemyChar.m_Cur.m_VelY) * (LocalPing*(50 / 1000));
-		EnemyPos = vec2(EnemyChar.m_Cur.m_X, EnemyChar.m_Cur.m_Y) + EnemyVel;
+		EnemyVel = mix(vec2(EnemyChar.m_Prev.m_VelX, EnemyChar.m_Prev.m_VelY), vec2(EnemyChar.m_Cur.m_VelX, EnemyChar.m_Cur.m_VelY), Client()->IntraGameTick()) * (LocalPing*(50 / 1000) * 2) ;
+		EnemyPos = mix(vec2(EnemyChar.m_Prev.m_X, EnemyChar.m_Prev.m_Y), vec2(EnemyChar.m_Cur.m_X, EnemyChar.m_Cur.m_Y), Client()->IntraGameTick()) + EnemyVel;
 		EnemyTeam = ((const CNetObj_PlayerInfo *)pInfo)->m_Team;
 		Friendstate = m_pClient->Friends()->IsFriend(m_pClient->m_aClients[i].m_aName, m_pClient->m_aClients[i].m_aClan, true);
 

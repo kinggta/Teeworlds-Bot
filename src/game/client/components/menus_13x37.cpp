@@ -39,12 +39,7 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	MainView.VSplitLeft(240.0f, &TabBar, &MainView);
 	TabBar.VSplitRight(2.0f, &TabBar, &Button);
 	RenderTools()->DrawUIRect(&Button, vec4(0.0f, 0.8f, 0.6f, 0.5f), 0, 0);
-
-	if(!numID)
-		return;
-
-
-
+	
 	for(int i = 0; i < numID; i++)
 	{
 		CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(i);
@@ -80,7 +75,7 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 		UI()->DoLabelScaled(&Button, pTee->m_aName, 14.0f, 0);
 		TextRender()->TextColor(1.0f, 1.0f, 1.0f, 1.0f);
 	}
-	CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(Page);
+	
 	static int s_ButtonAdd = 0;
 
 	TabBar.HSplitTop(24.0f, &Button, &TabBar);
@@ -105,6 +100,9 @@ void CMenus::Render13x37Identity(CUIRect MainView)
 	Button.VSplitLeft(230.0f, &Button, 0);
 
 	static int s_UseID = 0; //TODO ändern
+	CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(Page);
+	if(!m_pClient->m_pTeeFiles->Num() || !pTee)
+		return;
 
 	if(DoButton_Menu(&s_UseID, Localize("Use ID"), 0, &Button))
 	{
