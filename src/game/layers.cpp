@@ -34,12 +34,12 @@ void CLayers::Init(class IKernel *pKernel)
 	for(int g = 0; g < NumGroups(); g++)
 	{
 		char aGroupName[128];
+		mem_zero(&aGroupName, sizeof(aGroupName));
 		CMapItemGroup *pGroup = GetGroup(g);
 
 		IntsToStr(pGroup->m_aName, sizeof(aGroupName)/sizeof(int), aGroupName);
-		for(int i = 0; i < 8; i++)
-		dbg_msg(0, "%i %s", g, aGroupName+i);
-		m_pMapGroups.add(new CMapGroupEx(true, aGroupName));
+		if(pGroup->m_Version < 3 || aGroupName[0] == 0)
+			str_format(aGroupName, sizeof(aGroupName), "#%i Group", g);
 
 		for(int l = 0; l < pGroup->m_NumLayers; l++)
 		{
@@ -51,6 +51,10 @@ void CLayers::Init(class IKernel *pKernel)
 			{
 				CMapItemLayerTilemap *pTilemap = reinterpret_cast<CMapItemLayerTilemap *>(pLayer);
 				IntsToStr(pTilemap->m_aName, sizeof(aLayerName)/sizeof(int), aLayerName);
+
+				if(pTilemap->m_Version < 3 || aLayerName[0] == 0)
+					str_copy(aLayerName, "Tiles", sizeof(aLayerName));
+
 				if(pTilemap->m_Flags&TILESLAYERFLAG_GAME)
 				{
 					m_pGameLayer = pTilemap;
@@ -70,16 +74,24 @@ void CLayers::Init(class IKernel *pKernel)
 						m_pGameGroup->m_ClipW = 0;
 						m_pGameGroup->m_ClipH = 0;
 					}
+
+					str_copy(aLayerName, "Game", sizeof(aLayerName));
+					str_copy(aGroupName, "Game", sizeof(aGroupName));
 				}
 			}
 			else if(pLayer->m_Type == LAYERTYPE_QUADS)
 			{
 				CMapItemLayerQuads *pQuads = reinterpret_cast<CMapItemLayerQuads *>(pLayer);
 				IntsToStr(pQuads->m_aName, sizeof(aLayerName)/sizeof(int), aLayerName);
+
+				if(pQuads->m_Version < 2 || aLayerName[0] == 0)
+					str_copy(aLayerName, "Quads", sizeof(aLayerName));
 			}
 
 			m_pMapLayers.add(new CMapLayerEx(true, aLayerName));
 		}
+
+		m_pMapGroups.add(new CMapGroupEx(true, aGroupName));
 	}
 }
 
