@@ -100,9 +100,9 @@ void CTeeFiles::Save()
 				char aOldIndex[4];
 				str_format(aNewIndex, sizeof(aNewIndex), "%03d", i);
 				str_format(aOldIndex, sizeof(aOldIndex), pTee->m_aFilename);
+				str_format(aFilename, sizeof(aFilename), pTee->m_aFilename);
 				if(str_toint(aNewIndex) != str_toint(aOldIndex))
 				{
-					str_format(aFilename, sizeof(aFilename), pTee->m_aFilename);
 					for(int i = 0; i < 3; i++)
 						aFilename[i] = aNewIndex[i];
 					Rename = true;
@@ -138,17 +138,17 @@ void CTeeFiles::Save()
 		str_format(aTeeEntry[TEE_COLORFEET], sz, "%d", pTee->m_ColorFeet);
 		str_format(aTeeEntry[TEE_COUNTRY], sz, "%d", pTee->m_Country);
 		
-		for(int i = 0; i < NUM_TEE_ENTRIES; i++)
+		for(int j = 0; j < NUM_TEE_ENTRIES; j++)
 		{
 			if(!File)
 			{
-				str_format(aBuf, sizeof(aBuf), "failed to save '%s' at line %d", aFilename, i);
+				str_format(aBuf, sizeof(aBuf), "failed to save '%s' at line %d", aFilename, j);
 				Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "console", aBuf);
 				io_close(File);
-				mem_zero(aTeeEntry[i], sizeof(aTeeEntry[i]));
+				mem_zero(aTeeEntry[j], sizeof(aTeeEntry[j]));
 				break;
 			}
-			io_write(File, aTeeEntry[i], str_length(aTeeEntry[i]));
+			io_write(File, aTeeEntry[j], str_length(aTeeEntry[j]));
 			io_write_newline(File);
 		}
 		io_close(File);
