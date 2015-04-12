@@ -71,6 +71,7 @@ MACRO_CONFIG_INT(XAimbotRangeFromTuning, x_aimbot_range_from_tunings, 0, 0, 1, C
 MACRO_CONFIG_INT(XAimbotHotkey, x_aimbot_hotkey, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Use hotkey to aim (set with 'bind <key> +aim')")
 MACRO_CONFIG_INT(XAimbotAutoshot, x_aimbot_autoshot, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Shoot on sight")
 MACRO_CONFIG_INT(XAimbotAutohook, x_aimbot_autohook, 0, 0, 1, CFGFLAG_CLIENT|CFGFLAG_SAVE, "Hook on sight")
+MACRO_CONFIG_INT(XAimbotFNG, x_aimbot_fng, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Do not target frozen enemies unless you use a hammer")
 
 MACRO_CONFIG_INT(XTriggerbot, x_triggerbot, 0, 0, 1, CFGFLAG_CLIENT | CFGFLAG_SAVE, "Shoot when target is in line of aim")
 
