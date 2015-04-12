@@ -47,21 +47,19 @@ void CMenus::RenderQADummy(CUIRect MainView)
 {
 #define DUMMY_HELPER(part) g_Config.m_XDummy##part
 #define DUMMY(part ,id) id == 1 ? DUMMY_HELPER(part ## 1) : id == 2 ? DUMMY_HELPER(part ## 2) : DUMMY_HELPER(part ## 3)
-#define FAKE_HELPER(part) g_Config.m_XFake##part
-#define FAKE(part ,id) id == 1 ? FAKE_HELPER(part ## 1) : id == 2 ? FAKE_HELPER(part ## 2) : id == 3 ? FAKE_HELPER(part ## 3) : id == 4 ? FAKE_HELPER(part ## 4) : FAKE_HELPER(part ## 5) 
 
 	const int NumDummys = MAX_DUMMIES + 1; // + 3 dummies + main tee
-	const int NumIdentities = m_pClient->m_pTeeFiles->Num(); 
+	const int NumIdentities = m_pClient->m_pTeeFiles->Num();
 	CUIRect Button, Label, Temp;
 	static float s_Scrollbar = 0;
 	static float s_ScrollValue = 0;
 	static int s_Page = 0;
 	static int s_Dummy[NumDummys];
-	static int SelectedDummy = 0, SelectedIdentity = g_Config.m_XFakeId;
-	
+	static int SelectedDummy = 0, SelectedIdentity = 0;
+
 
 	// main form
-	
+
 	RenderTools()->DrawUIRect(&MainView, vec4(0.0f, 0.0f, 0.0f, 0.5f), CUI::CORNER_B, 10.0f);
 
 	// tabs
@@ -135,7 +133,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 	}
 	else
 	{
-		for(int i = 1; i < NumIdentities; i++)
+		for(int i = 0; i < NumIdentities; i++)
 		{
 			CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(i);
 			Button.VSplitLeft(80.0f, &Label, &Button);
@@ -160,7 +158,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 					SkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 				}
 			}
-			
+
 			SkinInfo.m_Size = 50.0f*UI()->Scale();
 			RenderTools()->RenderTee(CAnimState::GetIdle(), &SkinInfo, 0, vec2(1, 0), vec2(Label.x + Label.w * 0.5f, Label.y + Label.h * 0.5f));
 
@@ -192,7 +190,7 @@ void CMenus::RenderQADummy(CUIRect MainView)
 
 		if(SelectedDummy)
 		{
-			if(Client()->GetDummyFlags(SelectedDummy-1)&IClient::DUMMYFLAG_ACTIVE == 1)
+			if(Client()->GetDummyFlags(SelectedDummy - 1)&IClient::DUMMYFLAG_ACTIVE == 1)
 			{
 				if(DoButton_Menu(&s_ButtonConnect, "Disconnect", 0, &Button, NULL, vec4(0.7f, 1, 0.7f, 0.5f)))
 				{
@@ -209,13 +207,13 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		}
 		Temp.VSplitLeft(30.0f, 0, &Temp);
 		Temp.VSplitLeft(100.0f, &Button, &Temp);
-		if(DoButton_Menu(&s_ButtonCenter, "Center", 0, &Button, NULL, Client()->GetCentralDummy() == SelectedDummy-1? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
+		if(DoButton_Menu(&s_ButtonCenter, "Center", 0, &Button, NULL, Client()->GetCentralDummy() == SelectedDummy - 1 ? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
 		{
 			Client()->SetCentralDummy(Id);
 		}
 		Temp.VSplitLeft(30.0f, 0, &Temp);
 		Temp.VSplitLeft(100.0f, &Button, &Temp);
-		if(DoButton_Menu(&s_ButtonInput, "Input", 0, &Button, NULL, Client()->GetDummyMoving(SelectedDummy-1)? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
+		if(DoButton_Menu(&s_ButtonInput, "Input", 0, &Button, NULL, Client()->GetDummyMoving(SelectedDummy - 1) ? vec4(0.7f, 1.0f, 0.7f, 0.5f) : vec4(1.0f, 1.0f, 1.0f, 0.5f)))
 		{
 			Client()->ToggleInputDummy(Id);
 		}
@@ -237,10 +235,6 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		}
 
 	}
-
-
-#undef DUMMY_HELPER
-#undef DUMMY
 }
 
 void CMenus::RenderQAMark(CUIRect MainView)
