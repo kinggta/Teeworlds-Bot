@@ -169,8 +169,6 @@ bool CControls::Aimbot()
 			continue;
 		if(g_Config.m_XAimbotFriendcheck && Friendstate == IFriends::CONTACT_FRIEND) // Do not aim on friends
 			continue;
-
-		dbg_msg(0, m_pClient->m_aClients[i].m_aSkinName);
 		if(g_Config.m_XAimbotFNG && EnemyChar.m_Cur.m_Weapon%NUM_WEAPONS == WEAPON_NINJA)
 			continue;
 
