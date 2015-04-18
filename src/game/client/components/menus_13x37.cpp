@@ -730,7 +730,7 @@ void CMenus::Render13x37Bots(CUIRect MainView)
 		if(DoButton_CheckBox(&g_Config.m_XAimbotFriendcheck, Localize("Do not aim on friends"), g_Config.m_XAimbotFriendcheck, &Button))
 			g_Config.m_XAimbotFriendcheck ^= 1;
 		MainView.HSplitTop(20.0f, &Button, &MainView);
-		if(DoButton_CheckBox(&g_Config.m_XAimbotFNG, Localize("FNG mode (do not aim on frozen targets"), g_Config.m_XAimbotFNG, &Button))
+		if(DoButton_CheckBox(&g_Config.m_XAimbotFNG, Localize("FNG mode (do not aim on frozen targets)"), g_Config.m_XAimbotFNG, &Button))
 			g_Config.m_XAimbotFNG ^= 1;
 
 		MainView.HSplitTop(20.0f, &Button, &MainView);

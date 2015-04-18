@@ -169,7 +169,7 @@ bool CControls::Aimbot()
 			continue;
 		if(g_Config.m_XAimbotFriendcheck && Friendstate == IFriends::CONTACT_FRIEND) // Do not aim on friends
 			continue;
-		if(g_Config.m_XAimbotFNG && EnemyChar.m_Cur.m_Weapon%NUM_WEAPONS == WEAPON_NINJA)
+		if(g_Config.m_XAimbotFNG && EnemyChar.m_Cur.m_Weapon%NUM_WEAPONS == WEAPON_NINJA && m_InputData.m_Fire != m_LastData.m_Fire)
 			continue;
 
 		Args.m_aEnemyPos[j++] = EnemyPos;
