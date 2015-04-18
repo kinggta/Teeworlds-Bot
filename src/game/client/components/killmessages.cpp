@@ -37,31 +37,38 @@ void CKillMessages::OnMessage(int MsgType, void *pRawMsg)
 		Kill.m_Tick = Client()->GameTick();
 
 		// add the message
-		m_KillmsgCurrent = (m_KillmsgCurrent+1)%MAX_KILLMSGS;
+		m_KillmsgCurrent = (m_KillmsgCurrent + 1) % MAX_KILLMSGS;
 		m_aKillmsgs[m_KillmsgCurrent] = Kill;
 	}
 }
 
 void CKillMessages::OnRender()
 {
-	float Width = 400*3.0f*Graphics()->ScreenAspect();
-	float Height = 400*3.0f;
+	float Width = 400 * 3.0f*Graphics()->ScreenAspect();
+	float Height = 400 * 3.0f;
 
 	Graphics()->MapScreen(0, 0, Width*1.5f, Height*1.5f);
-	float StartX = Width*1.5f-10.0f;
+	float StartX = Width*1.5f - 10.0f;
 	float y = 20.0f;
 
 	for(int i = 1; i <= MAX_KILLMSGS; i++)
 	{
-		int r = (m_KillmsgCurrent+i)%MAX_KILLMSGS;
-		if(Client()->GameTick() > m_aKillmsgs[r].m_Tick+50*10)
+		int r = (m_KillmsgCurrent + i) % MAX_KILLMSGS;
+		if(Client()->GameTick() > m_aKillmsgs[r].m_Tick + 50 * 10)
 			continue;
 
 		float FontSize = 36.0f;
 		float KillerNameW = TextRender()->TextWidth(0, FontSize, m_aKillmsgs[r].m_aKillerName, -1);
 		float VictimNameW = TextRender()->TextWidth(0, FontSize, m_aKillmsgs[r].m_aVictimName, -1);
+		float NameSpace = TextRender()->TextWidth(0, FontSize, "XXXXXXXXXXXXXXXX", -1);
 
 		float x = StartX;
+
+		if(m_aKillmsgs[r].m_VictimID == m_pClient->m_Snap.m_LocalClientID || m_aKillmsgs[r].m_KillerID == m_pClient->m_Snap.m_LocalClientID)
+		{
+			CUIRect r = { x - (208.0f + 2 * NameSpace), y - 4.0f, x + 10.0f - r.x, 54 };
+			RenderTools()->DrawUIRect(&r, vec4(1, 1, 1, 0.25f), CUI::CORNER_L, 8.0f);
+		}
 
 		// render victim name
 		x -= VictimNameW;
@@ -72,7 +79,7 @@ void CKillMessages::OnRender()
 
 		if(m_pClient->m_Snap.m_pGameInfoObj && m_pClient->m_Snap.m_pGameInfoObj->m_GameFlags&GAMEFLAG_FLAGS)
 		{
-			if(m_aKillmsgs[r].m_ModeSpecial&1)
+			if(m_aKillmsgs[r].m_ModeSpecial & 1)
 			{
 				Graphics()->BlendNormal();
 				Graphics()->TextureSet(g_pData->m_aImages[IMAGE_GAME].m_Id);
@@ -84,23 +91,23 @@ void CKillMessages::OnRender()
 					RenderTools()->SelectSprite(SPRITE_FLAG_RED);
 
 				float Size = 56.0f;
-				IGraphics::CQuadItem QuadItem(x, y-16, Size/2, Size);
+				IGraphics::CQuadItem QuadItem(x, y - 16, Size / 2, Size);
 				Graphics()->QuadsDrawTL(&QuadItem, 1);
 				Graphics()->QuadsEnd();
 			}
 		}
 
-		RenderTools()->RenderTee(CAnimState::GetIdle(), &m_aKillmsgs[r].m_VictimRenderInfo, EMOTE_PAIN, vec2(-1,0), vec2(x, y+28));
+		RenderTools()->RenderTee(CAnimState::GetIdle(), &m_aKillmsgs[r].m_VictimRenderInfo, EMOTE_PAIN, vec2(-1, 0), vec2(x, y + 28));
 		x -= 32.0f;
 
 		// render weapon
 		x -= 44.0f;
-		if (m_aKillmsgs[r].m_Weapon >= 0)
+		if(m_aKillmsgs[r].m_Weapon >= 0)
 		{
 			Graphics()->TextureSet(g_pData->m_aImages[IMAGE_GAME].m_Id);
 			Graphics()->QuadsBegin();
 			RenderTools()->SelectSprite(g_pData->m_Weapons.m_aId[m_aKillmsgs[r].m_Weapon].m_pSpriteBody);
-			RenderTools()->DrawSprite(x, y+28, 96);
+			RenderTools()->DrawSprite(x, y + 28, 96);
 			Graphics()->QuadsEnd();
 		}
 		x -= 52.0f;
@@ -109,7 +116,7 @@ void CKillMessages::OnRender()
 		{
 			if(m_pClient->m_Snap.m_pGameInfoObj && m_pClient->m_Snap.m_pGameInfoObj->m_GameFlags&GAMEFLAG_FLAGS)
 			{
-				if(m_aKillmsgs[r].m_ModeSpecial&2)
+				if(m_aKillmsgs[r].m_ModeSpecial & 2)
 				{
 					Graphics()->BlendNormal();
 					Graphics()->TextureSet(g_pData->m_aImages[IMAGE_GAME].m_Id);
@@ -121,7 +128,7 @@ void CKillMessages::OnRender()
 						RenderTools()->SelectSprite(SPRITE_FLAG_RED, SPRITE_FLAG_FLIP_X);
 
 					float Size = 56.0f;
-					IGraphics::CQuadItem QuadItem(x-56, y-16, Size/2, Size);
+					IGraphics::CQuadItem QuadItem(x - 56, y - 16, Size / 2, Size);
 					Graphics()->QuadsDrawTL(&QuadItem, 1);
 					Graphics()->QuadsEnd();
 				}
@@ -129,7 +136,7 @@ void CKillMessages::OnRender()
 
 			// render killer tee
 			x -= 24.0f;
-			RenderTools()->RenderTee(CAnimState::GetIdle(), &m_aKillmsgs[r].m_KillerRenderInfo, EMOTE_ANGRY, vec2(1,0), vec2(x, y+28));
+			RenderTools()->RenderTee(CAnimState::GetIdle(), &m_aKillmsgs[r].m_KillerRenderInfo, EMOTE_ANGRY, vec2(1, 0), vec2(x, y + 28));
 			x -= 32.0f;
 
 			// render killer name
@@ -137,6 +144,6 @@ void CKillMessages::OnRender()
 			TextRender()->Text(0, x, y, FontSize, m_aKillmsgs[r].m_aKillerName, -1);
 		}
 
-		y += 46.0f;
+		y += 56.0f; //46
 	}
 }
