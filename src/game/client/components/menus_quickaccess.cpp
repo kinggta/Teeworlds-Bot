@@ -136,27 +136,27 @@ void CMenus::RenderQADummy(CUIRect MainView)
 		for(int i = 0; i < NumIdentities; i++)
 		{
 			CTeeFiles::CTee *pTee = m_pClient->m_pTeeFiles->Get(i);
+			if (pTee == NULL)
+				continue;
+
 			Button.VSplitLeft(80.0f, &Label, &Button);
 			if(DoButton_Menu(pTee, "", 0, &Label))
 				SelectedIdentity = i;
 			const CSkins::CSkin *pSkin = NULL;
 			CTeeRenderInfo SkinInfo;
 
-			if(i)
+			pSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pTee->m_aSkin));
+			if(pTee->m_UseCustomColor)
 			{
-				pSkin = m_pClient->m_pSkins->Get(m_pClient->m_pSkins->Find(pTee->m_aSkin));
-				if(pTee->m_UseCustomColor)
-				{
-					SkinInfo.m_Texture = pSkin->m_ColorTexture;
-					SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorBody);
-					SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorFeet);
-				}
-				else
-				{
-					SkinInfo.m_Texture = pSkin->m_OrgTexture;
-					SkinInfo.m_ColorBody = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-					SkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-				}
+				SkinInfo.m_Texture = pSkin->m_ColorTexture;
+				SkinInfo.m_ColorBody = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorBody);
+				SkinInfo.m_ColorFeet = m_pClient->m_pSkins->GetColorV4(pTee->m_ColorFeet);
+			}
+			else
+			{
+				SkinInfo.m_Texture = pSkin->m_OrgTexture;
+				SkinInfo.m_ColorBody = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+				SkinInfo.m_ColorFeet = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 
 			SkinInfo.m_Size = 50.0f*UI()->Scale();
